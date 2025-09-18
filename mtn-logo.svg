@@ -1,0 +1,5 @@
+<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="12" cy="12" r="12" fill="#FFCD00"/>
+  <rect x="4" y="8" width="16" height="8" rx="2" fill="#0066CC"/>
+  <text x="12" y="14" text-anchor="middle" fill="#FFFFFF" font-size="6" font-weight="bold" font-family="Arial">MTN</text>
+</svg>

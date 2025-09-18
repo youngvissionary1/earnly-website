@@ -1,0 +1,6 @@
+<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="12" cy="12" r="12" fill="#9CD400"/>
+  <circle cx="8" cy="8" r="3" fill="#006633"/>
+  <text x="8" y="11" text-anchor="middle" fill="#FFFFFF" font-size="8" font-weight="bold" font-family="Arial">9</text>
+  <text x="12" y="19" text-anchor="middle" fill="#006633" font-size="4" font-weight="bold" font-family="Arial">mobile</text>
+</svg>
