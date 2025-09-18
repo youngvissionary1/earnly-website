@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard - Earnly</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root {
+  --primary: #6366f1;
+  --secondary: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --dark-1: #111827;
+  --dark-2: #1f2937;
+  --dark-3: #374151;
+  --text-primary: #f3f4f6;
+  --text-secondary: #d1d5db;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, var(--dark-1) 0%, var(--dark-2) 100%);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+.header {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--dark-3);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.admin-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.clock-widget {
+  text-align: right;
+}
+
+.clock-time {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.clock-date {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--dark-3);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.stat-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.dashboard-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--dark-3);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--dark-3);
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.user-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.user-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-weight: 500;
+}
+
+.user-email {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.status-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.status-active {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--secondary);
+}
+
+.status-inactive {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--danger);
+}
+
+.admin-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.quick-actions {
+  position: sticky;
+  top: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 180px);
+  grid-template-rows: repeat(2, 70px);
+  gap: 0.8rem;
+  justify-content: start;
+  margin-bottom: 2rem;
+  z-index: 100;
+}
+
+.action-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--dark-3);
+  border-radius: 8px;
+  padding: 0.8rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.action-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.action-icon {
+  font-size: 1.2rem;
+  color: var(--primary);
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .container {
+    padding: 1rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <i class="fas fa-shield-alt"></i> Admin Dashboard
+  </div>
+  <div class="admin-info">
+    <div class="clock-widget">
+      <div class="clock-time" id="clockTime">12:00:00</div>
+      <div class="clock-date" id="clockDate">Mon, July, 25</div>
+    </div>
+    <a href="dashboard.html" class="btn" style="background:var(--dark-3);color:var(--text-primary);margin-right:1rem">
+      <i class="fas fa-arrow-left"></i> Dashboard
+    </a>
+    <span>Welcome, Admin</span>
+    <button class="btn btn-danger" onclick="logout()">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+  </div>
+</header>
+
+<div class="container">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon" style="color: var(--primary);">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="stat-value" id="totalUsers">0</div>
+      <div class="stat-label">Total Users</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon" style="color: var(--secondary);">
+        <i class="fas fa-user-check"></i>
+      </div>
+      <div class="stat-value" id="activeUsers">0</div>
+      <div class="stat-label">Active Users</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon" style="color: var(--warning);">
+        <i class="fas fa-dollar-sign"></i>
+      </div>
+      <div class="stat-value" id="totalEarnings">$0.00</div>
+      <div class="stat-label">Total Earnings</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon" style="color: var(--danger);">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <div class="stat-value" id="pendingWithdrawals">0</div>
+      <div class="stat-label">Pending Withdrawals</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon" style="color: #8b5cf6;">
+        <i class="fas fa-tv"></i>
+      </div>
+      <div class="stat-value" id="subscriptionBalance">$0.00</div>
+      <div class="stat-label">Subscription Balance</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon" style="color: #06b6d4;">
+        <i class="fas fa-globe-americas"></i>
+      </div>
+      <div class="stat-value" id="totalCountries">0</div>
+      <div class="stat-label">Countries</div>
+    </div>
+  </div>
+
+  <div class="quick-actions">
+    <a href="admin-management.html" class="action-btn">
+      <div class="action-icon">
+        <i class="fas fa-users-cog"></i>
+      </div>
+      <div>Manage Users</div>
+    </a>
+    
+    <a href="withdrawal-requests.html" class="action-btn">
+      <div class="action-icon">
+        <i class="fas fa-money-check-alt"></i>
+      </div>
+      <div>Withdrawal Requests</div>
+    </a>
+    
+    <a href="notifications.html" class="action-btn">
+      <div class="action-icon">
+        <i class="fas fa-clipboard-list"></i>
+      </div>
+      <div>Activity Logs</div>
+    </a>
+    
+    <a href="settings.html" class="action-btn">
+      <div class="action-icon">
+        <i class="fas fa-cog"></i>
+      </div>
+      <div>Settings</div>
+    </a>
+    
+    <a href="dashboard.html" class="action-btn">
+      <div class="action-icon">
+        <i class="fas fa-chart-line"></i>
+      </div>
+      <div>Analytics</div>
+    </a>
+    
+    <a href="withdraw.html" class="action-btn">
+      <div class="action-icon">
+        <i class="fas fa-video"></i>
+      </div>
+      <div>Upload Videos</div>
+    </a>
+    
+    <a href="tasks.html" class="action-btn">
+      <div class="action-icon">
+        <i class="fas fa-tv"></i>
+      </div>
+      <div>Subscriptions</div>
+    </a>
+    
+    <a href="emergency-messages.html" class="action-btn">
+      <div class="action-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <div>Emergency Messages</div>
+    </a>
+  </div>
+
+  <div class="dashboard-grid">
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h3 class="card-title">Recent Users</h3>
+        <a href="admin-users.html" style="color: var(--primary); text-decoration: none;">
+          View All <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+      <div class="user-list" id="recentUsers">
+        <div class="user-item">
+          <div class="user-info">
+            <div class="user-name">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h3 class="card-title">Geo Analytics</h3>
+        <button onclick="showGeoAnalyticsModal()" style="color: var(--primary); background: none; border: none; cursor: pointer; text-decoration: none;">
+          View Details <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+      <div id="geoAnalytics">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <span>🇳🇬 Nigeria</span>
+          <span style="color: var(--secondary); font-weight: 600;">85%</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <span>🇺🇸 United States</span>
+          <span style="color: var(--secondary); font-weight: 600;">8%</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <span>🇬🇧 United Kingdom</span>
+          <span style="color: var(--secondary); font-weight: 600;">4%</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span>🌍 Others</span>
+          <span style="color: var(--secondary); font-weight: 600;">3%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="dashboard-grid">
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h3 class="card-title">System Status</h3>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span>Server Status</span>
+          <span class="status-badge status-active">Online</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span>Database</span>
+          <span class="status-badge status-active">Connected</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span>Payment Gateway</span>
+          <span class="status-badge status-active">Active</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span>Last Backup</span>
+          <span style="color: var(--text-secondary); font-size: 0.9rem;">2 hours ago</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h3 class="card-title">Subscription Revenue</h3>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span>Monthly Subscriptions</span>
+          <span style="color: var(--secondary); font-weight: 600;">$2,450</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span>Weekly Subscriptions</span>
+          <span style="color: var(--secondary); font-weight: 600;">$890</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span>Daily Subscriptions</span>
+          <span style="color: var(--secondary); font-weight: 600;">$125</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span>Total Balance</span>
+          <span style="color: var(--primary); font-weight: 700; font-size: 1.1rem;">$3,465</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  <div class="main-content">
+    <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 2rem; text-align: center;">
+      <h3 style="margin-bottom: 1rem; color: var(--primary);">Admin Control Panel</h3>
+      <p style="color: var(--text-secondary); margin-bottom: 1rem;">Select an action from the buttons above to manage your platform</p>
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 2rem;">
+        <div style="background: var(--dark-3); padding: 1rem; border-radius: 8px;">
+          <i class="fas fa-users" style="color: var(--primary); font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+          <div style="font-weight: 600;">User Management</div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary);">Manage user accounts and permissions</div>
+        </div>
+        <div style="background: var(--dark-3); padding: 1rem; border-radius: 8px;">
+          <i class="fas fa-chart-bar" style="color: var(--secondary); font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+          <div style="font-weight: 600;">Analytics</div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary);">View detailed platform analytics</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Geo Analytics Modal -->
+<div id="geoAnalyticsModal" class="modal" style="display: none;">
+  <div class="modal-content" style="max-width: 800px; width: 90%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+      <h2 style="color: var(--primary);"><i class="fas fa-globe-americas"></i> Detailed Geo Analytics</h2>
+      <button onclick="closeGeoModal()" style="background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer;">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+      <div>
+        <h3 style="margin-bottom: 1rem; color: var(--secondary);">Countries & States</h3>
+        <div id="countryStateList" style="max-height: 400px; overflow-y: auto;">
+          <div style="margin-bottom: 1rem; padding: 1rem; background: var(--dark-3); border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <span style="font-weight: 600;">🇳🇬 Nigeria</span>
+              <span style="color: var(--secondary);">1,245 users (85%)</span>
+            </div>
+            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-left: 1rem;">
+              <div>• Lagos: 456 users</div>
+              <div>• Abuja: 234 users</div>
+              <div>• Kano: 189 users</div>
+              <div>• Rivers: 156 users</div>
+              <div>• Ogun: 134 users</div>
+              <div>• Others: 76 users</div>
+            </div>
+          </div>
+          
+          <div style="margin-bottom: 1rem; padding: 1rem; background: var(--dark-3); border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <span style="font-weight: 600;">🇺🇸 United States</span>
+              <span style="color: var(--secondary);">117 users (8%)</span>
+            </div>
+            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-left: 1rem;">
+              <div>• California: 34 users</div>
+              <div>• New York: 28 users</div>
+              <div>• Texas: 22 users</div>
+              <div>• Florida: 18 users</div>
+              <div>• Others: 15 users</div>
+            </div>
+          </div>
+          
+          <div style="margin-bottom: 1rem; padding: 1rem; background: var(--dark-3); border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <span style="font-weight: 600;">🇬🇧 United Kingdom</span>
+              <span style="color: var(--secondary);">58 users (4%)</span>
+            </div>
+            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-left: 1rem;">
+              <div>• England: 42 users</div>
+              <div>• Scotland: 8 users</div>
+              <div>• Wales: 5 users</div>
+              <div>• Northern Ireland: 3 users</div>
+            </div>
+          </div>
+          
+          <div style="margin-bottom: 1rem; padding: 1rem; background: var(--dark-3); border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <span style="font-weight: 600;">🇨🇦 Canada</span>
+              <span style="color: var(--secondary);">29 users (2%)</span>
+            </div>
+            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-left: 1rem;">
+              <div>• Ontario: 12 users</div>
+              <div>• British Columbia: 8 users</div>
+              <div>• Quebec: 5 users</div>
+              <div>• Others: 4 users</div>
+            </div>
+          </div>
+          
+          <div style="margin-bottom: 1rem; padding: 1rem; background: var(--dark-3); border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <span style="font-weight: 600;">🌍 Others</span>
+              <span style="color: var(--secondary);">15 users (1%)</span>
+            </div>
+            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-left: 1rem;">
+              <div>• Ghana: 4 users</div>
+              <div>• South Africa: 3 users</div>
+              <div>• Kenya: 3 users</div>
+              <div>• Australia: 2 users</div>
+              <div>• Others: 3 users</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div>
+        <h3 style="margin-bottom: 1rem; color: var(--secondary);">Analytics Summary</h3>
+        <div style="background: var(--dark-3); padding: 1.5rem; border-radius: 8px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+            <span>Total Countries:</span>
+            <span style="color: var(--primary); font-weight: 600;">45</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+            <span>Total States/Provinces:</span>
+            <span style="color: var(--primary); font-weight: 600;">187</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+            <span>Most Active Country:</span>
+            <span style="color: var(--secondary); font-weight: 600;">Nigeria</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+            <span>Most Active State:</span>
+            <span style="color: var(--secondary); font-weight: 600;">Lagos, Nigeria</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+            <span>Growth Rate:</span>
+            <span style="color: var(--accent); font-weight: 600;">+12.5%</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Last Updated:</span>
+            <span style="color: var(--text-secondary);">2 minutes ago</span>
+          </div>
+        </div>
+        
+        <div style="margin-top: 2rem;">
+          <h4 style="margin-bottom: 1rem; color: var(--accent);">Recent Activity</h4>
+          <div style="background: var(--dark-3); padding: 1rem; border-radius: 8px; font-size: 0.9rem;">
+            <div style="margin-bottom: 0.5rem;">• New user from Lagos, Nigeria - 2 min ago</div>
+            <div style="margin-bottom: 0.5rem;">• New user from California, USA - 15 min ago</div>
+            <div style="margin-bottom: 0.5rem;">• New user from London, UK - 23 min ago</div>
+            <div style="margin-bottom: 0.5rem;">• New user from Abuja, Nigeria - 31 min ago</div>
+            <div>• New user from Ontario, Canada - 45 min ago</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div style="text-align: center;">
+      <button onclick="closeGeoModal()" style="background: var(--primary); color: white; border: none; padding: 0.75rem 2rem; border-radius: 8px; cursor: pointer;">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://apis.google.com/js/api.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+<script src="js/api.js"></script>
+<script>
+async function loadDashboardData() {
+  try {
+    const response = await fetch('/api/admin/stats', {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('earnly_token')}`
+      }
+    });
+    
+    const data = await response.json();
+    
+    if (data.status) {
+      document.getElementById('totalUsers').textContent = data.stats.totalUsers;
+      document.getElementById('activeUsers').textContent = data.stats.activeUsers;
+      document.getElementById('totalEarnings').textContent = `$${data.stats.totalEarnings.toFixed(2)}`;
+      document.getElementById('pendingWithdrawals').textContent = data.stats.pendingWithdrawals;
+      document.getElementById('subscriptionBalance').textContent = `$${(data.stats.subscriptionBalance || 3465).toFixed(2)}`;
+      document.getElementById('totalCountries').textContent = data.stats.totalCountries || 45;
+      
+      // Load recent users
+      loadRecentUsers();
+    }
+  } catch (error) {
+    console.error('Failed to load dashboard data:', error);
+  }
+}
+
+async function loadRecentUsers() {
+  try {
+    const response = await fetch('/api/admin/users?limit=5', {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('earnly_token')}`
+      }
+    });
+    
+    const data = await response.json();
+    
+    if (data.status) {
+      const userList = document.getElementById('recentUsers');
+      userList.innerHTML = '';
+      
+      data.users.forEach(user => {
+        const userItem = document.createElement('div');
+        userItem.className = 'user-item';
+        userItem.innerHTML = `
+          <div class="user-info">
+            <div class="user-name">${user.username}</div>
+            <div class="user-email">${user.email}</div>
+          </div>
+          <span class="status-badge ${user.isActive ? 'status-active' : 'status-inactive'}">
+            ${user.isActive ? 'Active' : 'Inactive'}
+          </span>
+        `;
+        userList.appendChild(userItem);
+      });
+    }
+  } catch (error) {
+    console.error('Failed to load recent users:', error);
+  }
+}
+
+function logout() {
+  localStorage.removeItem('earnly_token');
+  localStorage.removeItem('earnly_user');
+  window.location.href = 'index.html';
+}
+
+// Check if user is authenticated admin
+if (!localStorage.getItem('earnly_token')) {
+  window.location.href = 'admin-access.html';
+}
+
+function updateClock() {
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString();
+  const dateStr = now.toLocaleDateString('en-US', { 
+    weekday: 'short', 
+    month: 'long', 
+    day: '2-digit' 
+  });
+  
+  document.getElementById('clockTime').textContent = timeStr;
+  document.getElementById('clockDate').textContent = dateStr;
+}
+
+setInterval(updateClock, 1000);
+
+function showGeoAnalyticsModal() {
+  document.getElementById('geoAnalyticsModal').style.display = 'flex';
+}
+
+function closeGeoModal() {
+  document.getElementById('geoAnalyticsModal').style.display = 'none';
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(e) {
+  const modal = document.getElementById('geoAnalyticsModal');
+  if (e.target === modal) {
+    closeGeoModal();
+  }
+});
+
+// Load dashboard data on page load
+document.addEventListener('DOMContentLoaded', function() {
+  updateClock();
+  loadDashboardData();
+});
+</script>
+
+<!-- S3 Upload Modal -->
+<div id="uploadModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;">
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--dark-2);padding:2rem;border-radius:12px;width:90%;max-width:500px;">
+    <h3 style="margin-bottom:1rem;">Upload Videos to S3</h3>
+    <div style="margin-bottom:1rem;">
+      <label>Category:</label>
+      <select id="uploadCategory" onchange="toggleSubcategory()" style="width:100%;padding:0.5rem;background:var(--dark-3);border:1px solid var(--dark-3);border-radius:8px;color:var(--text-primary);margin-top:0.5rem;">
+        <option value="comedy">Comedy</option>
+        <option value="music">Music</option>
+        <option value="movies">Movies</option>
+        <option value="news">News</option>
+      </select>
+    </div>
+    <div id="subcategoryDiv" style="display:none;margin-bottom:1rem;">
+      <label>Movie Subcategory:</label>
+      <select id="uploadSubcategory" style="width:100%;padding:0.5rem;background:var(--dark-3);border:1px solid var(--dark-3);border-radius:8px;color:var(--text-primary);margin-top:0.5rem;">
+        <option value="ey-yoruba">Ey.Yoruba</option>
+        <option value="ey-nollywood">Ey.Nollywood</option>
+        <option value="ey-action">Ey.Action</option>
+        <option value="ey-cartoons">Ey.Cartoons</option>
+      </select>
+    </div>
+    <div style="margin-bottom:1rem;">
+      <label>Video Title:</label>
+      <input type="text" id="videoTitle" placeholder="Enter video title" style="width:100%;padding:0.5rem;background:var(--dark-3);border:1px solid var(--dark-3);border-radius:8px;color:var(--text-primary);margin-top:0.5rem;">
+    </div>
+    <div style="margin-bottom:1rem;">
+      <label>Source Name:</label>
+      <input type="text" id="sourceName" placeholder="John Doe. Ey-TV" style="width:100%;padding:0.5rem;background:var(--dark-3);border:1px solid var(--dark-3);border-radius:8px;color:var(--text-primary);margin-top:0.5rem;">
+    </div>
+    <div style="margin-bottom:1rem;">
+      <label>Select Videos (Max 100):</label>
+      <input type="file" id="videoFiles" multiple accept="video/*" onchange="displaySelectedFiles()" style="width:100%;padding:0.5rem;background:var(--dark-3);border:1px solid var(--dark-3);border-radius:8px;color:var(--text-primary);margin-top:0.5rem;">
+      <div id="fileList" style="max-height:200px;overflow-y:auto;margin-top:0.5rem;padding:0.5rem;background:var(--dark-3);border-radius:8px;display:none;"></div>
+    </div>
+    <div id="uploadProgress" style="display:none;margin-bottom:1rem;">
+      <div style="background:var(--dark-3);border-radius:8px;overflow:hidden;">
+        <div id="progressBar" style="height:20px;background:var(--primary);width:0%;transition:width 0.3s;"></div>
+      </div>
+      <div id="progressText" style="text-align:center;margin-top:0.5rem;">0%</div>
+    </div>
+    <div style="display:flex;gap:1rem;justify-content:flex-end;">
+      <button onclick="closeUploadModal()" style="padding:0.5rem 1rem;background:var(--dark-3);border:none;border-radius:8px;color:var(--text-primary);cursor:pointer;">Cancel</button>
+      <button onclick="uploadToGoogleDrive()" style="padding:0.5rem 1rem;background:var(--primary);border:none;border-radius:8px;color:white;cursor:pointer;">Upload to Drive</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function showUploadModal() {
+  document.getElementById('uploadModal').style.display = 'block';
+}
+
+function toggleSubcategory() {
+  const category = document.getElementById('uploadCategory').value;
+  const subcategoryDiv = document.getElementById('subcategoryDiv');
+  subcategoryDiv.style.display = category === 'movies' ? 'block' : 'none';
+}
+
+function displaySelectedFiles() {
+  const files = document.getElementById('videoFiles').files;
+  const fileList = document.getElementById('fileList');
+  
+  if (files.length === 0) {
+    fileList.style.display = 'none';
+    return;
+  }
+  
+  if (files.length > 100) {
+    alert('Maximum 100 videos allowed. Please select fewer files.');
+    document.getElementById('videoFiles').value = '';
+    fileList.style.display = 'none';
+    return;
+  }
+  
+  fileList.style.display = 'block';
+  fileList.innerHTML = `
+    <div style="font-weight:600;margin-bottom:0.5rem;color:var(--primary);">Selected Files (${files.length}/100):</div>
+    ${Array.from(files).map((file, index) => `
+      <div style="padding:0.25rem 0;border-bottom:1px solid rgba(255,255,255,0.1);font-size:0.9rem;">
+        ${index + 1}. ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)
+      </div>
+    `).join('')}
+  `;
+}
+
+function closeUploadModal() {
+  document.getElementById('uploadModal').style.display = 'none';
+  document.getElementById('videoFiles').value = '';
+  document.getElementById('fileList').style.display = 'none';
+  document.getElementById('uploaderInfo').value = '';
+  document.getElementById('uploadProgress').style.display = 'none';
+}
+
+// Initialize Firebase
+const firebaseConfig = {
+  apiKey: "your_firebase_api_key",
+  authDomain: "your_project.firebaseapp.com",
+  projectId: "your_project_id",
+  storageBucket: "your_project.appspot.com",
+  messagingSenderId: "your_sender_id",
+  appId: "your_app_id"
+};
+
+let db;
+try {
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+} catch (e) {
+  console.log('Firebase init failed, using mock mode');
+}
+
+async function uploadToGoogleDrive() {
+  const category = document.getElementById('uploadCategory').value;
+  const subcategory = document.getElementById('uploadSubcategory').value;
+  const title = document.getElementById('videoTitle').value.trim();
+  const source = document.getElementById('sourceName').value.trim();
+  const files = document.getElementById('videoFiles').files;
+  
+  if (files.length === 0) {
+    alert('Please select videos to upload');
+    return;
+  }
+  
+  if (files.length > 100) {
+    alert('Maximum 100 videos allowed per upload');
+    return;
+  }
+  
+  if (!title || !source) {
+    alert('Please enter video title and source name');
+    return;
+  }
+  
+  const progressDiv = document.getElementById('uploadProgress');
+  const progressBar = document.getElementById('progressBar');
+  const progressText = document.getElementById('progressText');
+  
+  progressDiv.style.display = 'block';
+  
+  try {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const progress = Math.round(((i + 1) / files.length) * 100);
+      
+      // Simulate S3 upload (replace with actual AWS SDK calls)
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Update progress
+      progressBar.style.width = progress + '%';
+      progressText.textContent = `${progress}% (${i + 1}/${files.length})`;
+      
+      // Create video URL from file for testing
+      const videoUrl = URL.createObjectURL(file);
+      
+      const folderPath = category === 'movies' ? `${category}/${subcategory}` : category;
+      
+      // Map to Et-TV channel categories
+      let channelCategory = category;
+      if (category === 'movies') {
+        channelCategory = subcategory.replace('ey-', '');
+      }
+      
+      const videoData = {
+        id: `video_${Date.now()}_${i}`,
+        title: file.name.replace(/\.[^/.]+$/, ""),
+        uploader: uploader,
+        category: channelCategory,
+        subcategory: category === 'movies' ? subcategory : null,
+        s3_url: `https://ey-tv-videos.s3.amazonaws.com/${folderPath}/${file.name}`,
+        url: videoUrl,
+        file_size: file.size,
+        created_at: new Date().toISOString()
+      };
+      
+      // Store using video storage system
+      if (window.videoStorage) {
+        window.videoStorage.addVideo(videoData);
+      } else {
+        // Fallback to localStorage
+        const existingVideos = JSON.parse(localStorage.getItem('et_tv_videos') || '[]');
+        existingVideos.push(videoData);
+        localStorage.setItem('et_tv_videos', JSON.stringify(existingVideos));
+      }
+      
+      console.log('Stored video:', videoData);
+      
+      // Also try to store in Supabase
+      try {
+        await fetch('/api/videos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(videoData)
+        });
+      } catch (error) {
+        console.log('Supabase storage failed, using localStorage only');
+      }
+    }
+    
+    const totalVideos = JSON.parse(localStorage.getItem('et_tv_videos') || '[]').length;
+    alert(`Successfully uploaded ${files.length} videos! Total videos: ${totalVideos}`);
+    closeUploadModal();
+    
+  } catch (error) {
+    console.error('Upload failed:', error);
+    alert('Upload failed. Please try again.');
+  }
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+  const modal = document.getElementById('uploadModal');
+  if (event.target === modal) {
+    closeUploadModal();
+  }
+}
+</script>
+
+</body>
+</html>

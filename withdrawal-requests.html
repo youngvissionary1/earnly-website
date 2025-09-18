@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Withdrawal Requests - Earnly Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root {
+  --primary: #6366f1;
+  --secondary: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --dark-1: #111827;
+  --dark-2: #1f2937;
+  --dark-3: #374151;
+  --text-primary: #f3f4f6;
+  --text-secondary: #d1d5db;
+  --border-radius: 12px;
+  --transition: all 0.3s ease;
+  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, var(--dark-1) 0%, var(--dark-2) 100%);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+.header {
+  padding: 1rem 2rem;
+  background: rgba(31, 41, 55, 0.9);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--dark-3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.nav-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.btn {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-success {
+  background: var(--secondary);
+  color: white;
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.requests-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.request-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--dark-3);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  transition: var(--transition);
+}
+
+.request-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.request-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: white;
+}
+
+.user-details h4 {
+  margin-bottom: 0.25rem;
+}
+
+.user-details p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.request-amount {
+  text-align: right;
+}
+
+.amount-usd {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--secondary);
+}
+
+.amount-ngn {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.request-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.detail-item {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.detail-label {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.detail-value {
+  font-weight: 500;
+}
+
+.request-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-pending {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--warning);
+}
+
+.status-approved {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--secondary);
+}
+
+.status-denied {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--danger);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-secondary);
+}
+
+.empty-state i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .request-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .request-actions {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <i class="fas fa-shield-alt"></i> Earnly Admin
+  </div>
+  <div class="nav-actions">
+    <button class="btn btn-primary" onclick="refreshRequests()">
+      <i class="fas fa-sync-alt"></i> Refresh
+    </button>
+    <a href="admin.html" class="btn btn-primary">
+      <i class="fas fa-arrow-left"></i> Back to Admin
+    </a>
+  </div>
+</header>
+
+<div class="container">
+  <section>
+    <h2 class="section-title">
+      <i class="fas fa-credit-card"></i> Withdrawal Requests
+    </h2>
+    <div class="requests-grid" id="requestsGrid">
+      <div class="empty-state">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Loading withdrawal requests...</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+let withdrawalRequests = [];
+
+async function initWithdrawalRequests() {
+  try {
+    await loadWithdrawalRequests();
+  } catch (error) {
+    console.error('Failed to load withdrawal requests:', error);
+    showError('Failed to load withdrawal requests');
+  }
+}
+
+async function loadWithdrawalRequests() {
+  try {
+    // Load from localStorage for demo
+    const requests = JSON.parse(localStorage.getItem('earnly_withdrawal_requests') || '[]');
+    withdrawalRequests = requests;
+    displayRequests();
+  } catch (error) {
+    console.error('Failed to load requests:', error);
+    showError('Failed to load requests');
+  }
+}
+
+function displayRequests() {
+  const grid = document.getElementById('requestsGrid');
+  
+  if (withdrawalRequests.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <p>No withdrawal requests found</p>
+      </div>
+    `;
+    return;
+  }
+  
+  grid.innerHTML = withdrawalRequests.map(request => `
+    <div class="request-card">
+      <div class="request-header">
+        <div class="user-info">
+          <div class="user-avatar">${request.username.charAt(0).toUpperCase()}</div>
+          <div class="user-details">
+            <h4>${request.username}</h4>
+            <p>${request.email}</p>
+            <p>Requested: ${new Date(request.requestDate).toLocaleString()}</p>
+          </div>
+        </div>
+        <div class="request-amount">
+          <div class="amount-usd">$${request.amount.toFixed(3)}</div>
+          <div class="amount-ngn">₦${(request.amount * 1500).toLocaleString()}</div>
+          <div class="status-badge status-${request.status}">${request.status.charAt(0).toUpperCase() + request.status.slice(1)}</div>
+        </div>
+      </div>
+      
+      <div class="request-details">
+        <div class="detail-item">
+          <div class="detail-label">Bank Name</div>
+          <div class="detail-value">${request.bankName}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Account Name</div>
+          <div class="detail-value">${request.accountName}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Account Number</div>
+          <div class="detail-value">${request.accountNumber}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">User Balance</div>
+          <div class="detail-value">$${request.userBalance.toFixed(3)}</div>
+        </div>
+      </div>
+      
+      ${request.status === 'pending' ? `
+        <div class="request-actions">
+          <button class="btn btn-danger" onclick="denyRequest('${request.id}')">
+            <i class="fas fa-times"></i> Deny
+          </button>
+          <button class="btn btn-success" onclick="approveRequest('${request.id}')">
+            <i class="fas fa-check"></i> Approve
+          </button>
+        </div>
+      ` : ''}
+    </div>
+  `).join('');
+}
+
+async function approveRequest(requestId) {
+  try {
+    const request = withdrawalRequests.find(r => r.id === requestId);
+    if (!request) return;
+    
+    if (confirm(`Approve withdrawal of $${request.amount.toFixed(3)} for ${request.username}?`)) {
+      request.status = 'approved';
+      request.processedDate = new Date().toISOString();
+      
+      // Update localStorage
+      localStorage.setItem('earnly_withdrawal_requests', JSON.stringify(withdrawalRequests));
+      
+      showMessage('Withdrawal request approved successfully', 'success');
+      displayRequests();
+    }
+  } catch (error) {
+    console.error('Failed to approve request:', error);
+    showMessage('Failed to approve request', 'error');
+  }
+}
+
+async function denyRequest(requestId) {
+  try {
+    const request = withdrawalRequests.find(r => r.id === requestId);
+    if (!request) return;
+    
+    const reason = prompt('Enter reason for denial (optional):');
+    
+    if (confirm(`Deny withdrawal of $${request.amount.toFixed(3)} for ${request.username}?`)) {
+      request.status = 'denied';
+      request.processedDate = new Date().toISOString();
+      request.denyReason = reason || 'No reason provided';
+      
+      // Update localStorage
+      localStorage.setItem('earnly_withdrawal_requests', JSON.stringify(withdrawalRequests));
+      
+      showMessage('Withdrawal request denied', 'success');
+      displayRequests();
+    }
+  } catch (error) {
+    console.error('Failed to deny request:', error);
+    showMessage('Failed to deny request', 'error');
+  }
+}
+
+function refreshRequests() {
+  showMessage('Refreshing requests...', 'success');
+  loadWithdrawalRequests();
+}
+
+function showMessage(text, type = 'error') {
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px 24px;
+    border-radius: 12px;
+    color: white;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease;
+    background: ${type === 'success' ? 'var(--secondary)' : 'var(--danger)'};
+  `;
+  
+  notification.innerHTML = `
+    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+    <span>${text}</span>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    document.body.removeChild(notification);
+  }, 3000);
+}
+
+function showError(message) {
+  document.getElementById('requestsGrid').innerHTML = `
+    <div class="empty-state">
+      <i class="fas fa-exclamation-triangle"></i>
+      <p>${message}</p>
+    </div>
+  `;
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', initWithdrawalRequests);
+</script>
+</body>
+</html>

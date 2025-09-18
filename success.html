@@ -1,0 +1,627 @@
+@echo off
+echo Starting Earnly Platform...
+echo.
+echo Installing dependencies...
+npm install
+echo.
+echo Starting server on http://localhost:5500
+echo.
+node server.js
+pause
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root {
+  --primary: #6366f1;
+  --secondary: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --dark-1: #111827;
+  --dark-2: #1f2937;
+  --dark-3: #374151;
+  --text-primary: #f3f4f6;
+  --text-secondary: #d1d5db;
+  --border-radius: 12px;
+  --transition: all 0.3s ease;
+  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, var(--dark-1) 0%, var(--dark-2) 100%);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.container {
+  max-width: 500px;
+  width: 100%;
+}
+
+.status-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--dark-3);
+  border-radius: var(--border-radius);
+  padding: 3rem 2rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.status-icon {
+  font-size: 5rem;
+  margin-bottom: 2rem;
+  animation: bounce 1s ease-in-out;
+}
+
+.status-icon.success {
+  color: var(--secondary);
+}
+
+.status-icon.failed {
+  color: var(--danger);
+}
+
+@keyframes bounce {
+  0%, 20%, 60%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-20px); }
+  80% { transform: translateY(-10px); }
+}
+
+.status-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.status-title.success {
+  color: var(--secondary);
+}
+
+.status-title.failed {
+  color: var(--danger);
+}
+
+.status-message {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.receipt-section {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  margin: 2rem 0;
+  text-align: left;
+}
+
+.receipt-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed var(--dark-3);
+}
+
+.receipt-title {
+  color: var(--primary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.receipt-date {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.receipt-details {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.receipt-label {
+  color: var(--text-secondary);
+}
+
+.receipt-value {
+  font-weight: 600;
+}
+
+.receipt-amount {
+  color: var(--secondary);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-secondary {
+  background: var(--dark-3);
+  color: var(--text-primary);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.clock-widget {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  text-align: right;
+}
+
+.clock-time {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.clock-date {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 480px) {
+  .status-card {
+    padding: 2rem 1rem;
+  }
+  
+  .actions {
+    flex-direction: column;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="clock-widget">
+  <div class="clock-time" id="clockTime">12:00:00</div>
+  <div class="clock-date" id="clockDate">Mon, July, 25</div>
+</div>
+
+<div class="container" style="max-width:800px">
+  <div class="status-card" style="padding:2rem">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem">
+      <h1 style="color:var(--primary)"><i class="fas fa-upload"></i> Upload Videos</h1>
+      <div style="display:flex;align-items:center;gap:1rem">
+        <a href="dashboard.html" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Dashboard</a>
+        <a href="admin.html" class="btn btn-secondary">Back to Admin</a>
+      </div>
+    </div>
+    
+    <div style="display:flex;justify-content:center;margin-bottom:2rem">
+      <div style="display:flex;align-items:center;margin:0 1rem">
+        <div id="step1" style="width:40px;height:40px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;margin-right:0.5rem">1</div>
+        <span>Select File</span>
+      </div>
+      <div style="display:flex;align-items:center;margin:0 1rem">
+        <div id="step2" style="width:40px;height:40px;border-radius:50%;background:var(--dark-3);display:flex;align-items:center;justify-content:center;margin-right:0.5rem">2</div>
+        <span>Choose Channel</span>
+      </div>
+      <div style="display:flex;align-items:center;margin:0 1rem">
+        <div id="step3" style="width:40px;height:40px;border-radius:50%;background:var(--dark-3);display:flex;align-items:center;justify-content:center;margin-right:0.5rem">3</div>
+        <span>Upload</span>
+      </div>
+    </div>
+
+    <div id="fileStep">
+      <h2>Select Video File</h2>
+      <div onclick="document.getElementById('fileInput').click()" style="border:2px dashed var(--dark-3);border-radius:12px;padding:3rem;text-align:center;cursor:pointer;margin-bottom:2rem;transition:all 0.3s ease" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--dark-3)'">
+        <i class="fas fa-cloud-upload-alt" style="font-size:3rem;color:var(--primary);margin-bottom:1rem"></i>
+        <h3>Drop video files here or click to browse</h3>
+        <p>Select up to 50 videos • Max 4GB per video • 4 hours duration each</p>
+      </div>
+      <input type="file" id="fileInput" style="display:none" accept="*" multiple webkitdirectory="false" onchange="handleFileSelect(event)">
+      
+      <div id="filePreview" style="display:none;background:var(--dark-3);border-radius:8px;padding:1rem;margin-bottom:1rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+          <h4>Selected Videos (<span id="fileCount">0</span>)</h4>
+          <button onclick="removeAllFiles()" style="background:var(--danger);color:white;border:none;padding:0.5rem;border-radius:4px;cursor:pointer">Clear All</button>
+        </div>
+        <div id="fileList" style="max-height:200px;overflow-y:auto"></div>
+      </div>
+    </div>
+
+    <div id="channelStep" style="display:none">
+      <h2>Choose Channel</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem">
+        <div onclick="selectChannel('entertainment')" style="background:var(--dark-3);border:2px solid transparent;border-radius:8px;padding:1.5rem;text-align:center;cursor:pointer;transition:all 0.3s ease" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'">
+          <i class="fas fa-film" style="font-size:2rem;color:var(--primary);margin-bottom:1rem"></i>
+          <h3>Entertainment</h3>
+          <p>Movies, shows, comedy</p>
+        </div>
+        <div onclick="selectChannel('news')" style="background:var(--dark-3);border:2px solid transparent;border-radius:8px;padding:1.5rem;text-align:center;cursor:pointer;transition:all 0.3s ease" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'">
+          <i class="fas fa-newspaper" style="font-size:2rem;color:var(--danger);margin-bottom:1rem"></i>
+          <h3>News</h3>
+          <p>Current events, updates</p>
+        </div>
+        <div onclick="selectChannel('music')" style="background:var(--dark-3);border:2px solid transparent;border-radius:8px;padding:1.5rem;text-align:center;cursor:pointer;transition:all 0.3s ease" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'">
+          <i class="fas fa-music" style="font-size:2rem;color:var(--secondary);margin-bottom:1rem"></i>
+          <h3>Music</h3>
+          <p>Songs, concerts, videos</p>
+        </div>
+        <div onclick="selectChannel('sports')" style="background:var(--dark-3);border:2px solid transparent;border-radius:8px;padding:1.5rem;text-align:center;cursor:pointer;transition:all 0.3s ease" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'">
+          <i class="fas fa-futbol" style="font-size:2rem;color:var(--warning);margin-bottom:1rem"></i>
+          <h3>Sports</h3>
+          <p>Games, highlights, news</p>
+        </div>
+        <div onclick="selectChannel('kids')" style="background:var(--dark-3);border:2px solid transparent;border-radius:8px;padding:1.5rem;text-align:center;cursor:pointer;transition:all 0.3s ease" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'">
+          <i class="fas fa-child" style="font-size:2rem;color:#ec4899;margin-bottom:1rem"></i>
+          <h3>Kids</h3>
+          <p>Cartoons, education</p>
+        </div>
+        <div onclick="selectChannel('christian')" style="background:var(--dark-3);border:2px solid transparent;border-radius:8px;padding:1.5rem;text-align:center;cursor:pointer;transition:all 0.3s ease" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'">
+          <i class="fas fa-cross" style="font-size:2rem;color:#8b5cf6;margin-bottom:1rem"></i>
+          <h3>Christian</h3>
+          <p>Sermons, worship, faith</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="uploadStep" style="display:none">
+      <h2>Upload Details</h2>
+      <div style="margin-bottom:1.5rem">
+        <label style="display:block;margin-bottom:0.5rem;font-weight:600">Video Title (Optional)</label>
+        <input type="text" id="videoTitle" style="width:100%;padding:1rem;background:var(--dark-3);border:2px solid var(--dark-3);border-radius:8px;color:var(--text-primary);font-size:1rem" placeholder="Enter custom title or leave blank for auto-generated">
+      </div>
+      
+      <div id="uploadProgress" style="display:none;text-align:center;padding:2rem">
+        <h3 id="uploadTitle">Uploading Videos...</h3>
+        <div id="boxContainer" style="display:flex;flex-wrap:wrap;justify-content:center;gap:1rem;margin:2rem 0;min-height:100px"></div>
+        <div id="successMessages" style="margin-top:1rem"></div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:2rem">
+      <button id="prevBtn" onclick="previousStep()" style="display:none" class="btn btn-secondary">← Previous</button>
+      <button id="nextBtn" onclick="nextStep()" disabled class="btn btn-primary" style="margin-left:1rem">Next →</button>
+      <button id="uploadBtn" onclick="startUpload()" style="display:none" class="btn btn-primary">📤 Upload Video</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentStep = 1;
+let selectedFile = [];
+let selectedChannel = null;
+
+function updateClock() {
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString();
+  const dateStr = now.toLocaleDateString('en-US', { 
+    weekday: 'short', 
+    month: 'long', 
+    day: '2-digit' 
+  });
+  
+  document.getElementById('clockTime').textContent = timeStr;
+  document.getElementById('clockDate').textContent = dateStr;
+}
+
+function handleFileSelect(event) {
+  const files = Array.from(event.target.files);
+  const videoFiles = files.filter(file => {
+    // Accept any video format or common video extensions
+    const isVideo = file.type.startsWith('video/') || 
+                   /\.(mp4|avi|mov|wmv|mkv|flv|webm|m4v|3gp|ogv|ts|m2ts|vob|asf|rm|rmvb|divx|xvid)$/i.test(file.name);
+    const sizeOk = file.size <= 4 * 1024 * 1024 * 1024; // 4GB max
+    
+    if (isVideo && !sizeOk) {
+      alert(`${file.name} is too large (max 4GB per video)`);
+      return false;
+    }
+    return isVideo;
+  });
+  
+  if (videoFiles.length > 0) {
+    if (videoFiles.length > 50) {
+      alert(`Selected ${videoFiles.length} videos. Maximum 50 videos allowed per upload. First 50 videos will be selected.`);
+      selectedFile = videoFiles.slice(0, 50);
+    } else {
+      selectedFile = videoFiles;
+    }
+    updateFilePreview();
+    document.getElementById('filePreview').style.display = 'block';
+    document.getElementById('nextBtn').disabled = false;
+  } else {
+    alert('Please select valid video files. All video formats supported.');
+  }
+}
+
+function updateFilePreview() {
+  const fileList = document.getElementById('fileList');
+  const fileCount = document.getElementById('fileCount');
+  
+  fileCount.textContent = selectedFile.length;
+  fileList.innerHTML = '';
+  
+  selectedFile.forEach((file, index) => {
+    const fileItem = document.createElement('div');
+    fileItem.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:0.5rem;margin-bottom:0.5rem;background:rgba(255,255,255,0.05);border-radius:4px';
+    fileItem.innerHTML = `
+      <div>
+        <i class="fas fa-video" style="margin-right:0.5rem"></i>
+        <span>${file.name}</span>
+        <small style="color:var(--text-secondary);margin-left:0.5rem">(${formatFileSize(file.size)})</small>
+      </div>
+      <button onclick="removeFile(${index})" style="background:var(--danger);color:white;border:none;padding:0.25rem 0.5rem;border-radius:4px;cursor:pointer;font-size:0.8rem">×</button>
+    `;
+    fileList.appendChild(fileItem);
+  });
+}
+
+function removeFile(index) {
+  selectedFile.splice(index, 1);
+  if (selectedFile.length === 0) {
+    removeAllFiles();
+  } else {
+    updateFilePreview();
+  }
+}
+
+function removeAllFiles() {
+  selectedFile = [];
+  document.getElementById('fileInput').value = '';
+  document.getElementById('filePreview').style.display = 'none';
+  document.getElementById('nextBtn').disabled = true;
+}
+
+function selectChannel(channel) {
+  selectedChannel = channel;
+  document.querySelectorAll('[onclick^="selectChannel"]').forEach(card => {
+    card.style.borderColor = 'transparent';
+  });
+  event.target.closest('div').style.borderColor = 'var(--secondary)';
+  document.getElementById('nextBtn').disabled = false;
+}
+
+function nextStep() {
+  if (currentStep < 3) {
+    document.getElementById(`step${currentStep}`).style.background = 'var(--secondary)';
+    currentStep++;
+    document.getElementById(`step${currentStep}`).style.background = 'var(--primary)';
+    
+    if (currentStep === 2) {
+      document.getElementById('fileStep').style.display = 'none';
+      document.getElementById('channelStep').style.display = 'block';
+      document.getElementById('prevBtn').style.display = 'inline-block';
+      document.getElementById('nextBtn').disabled = true;
+    } else if (currentStep === 3) {
+      document.getElementById('channelStep').style.display = 'none';
+      document.getElementById('uploadStep').style.display = 'block';
+      document.getElementById('nextBtn').style.display = 'none';
+      document.getElementById('uploadBtn').style.display = 'inline-block';
+    }
+  }
+}
+
+function previousStep() {
+  if (currentStep > 1) {
+    document.getElementById(`step${currentStep}`).style.background = 'var(--dark-3)';
+    currentStep--;
+    document.getElementById(`step${currentStep}`).style.background = 'var(--primary)';
+    
+    if (currentStep === 1) {
+      document.getElementById('channelStep').style.display = 'none';
+      document.getElementById('fileStep').style.display = 'block';
+      document.getElementById('prevBtn').style.display = 'none';
+      document.getElementById('nextBtn').disabled = !selectedFile;
+    } else if (currentStep === 2) {
+      document.getElementById('uploadStep').style.display = 'none';
+      document.getElementById('channelStep').style.display = 'block';
+      document.getElementById('nextBtn').style.display = 'inline-block';
+      document.getElementById('uploadBtn').style.display = 'none';
+      document.getElementById('nextBtn').disabled = !selectedChannel;
+    }
+  }
+}
+
+function startUpload() {
+  document.getElementById('uploadProgress').style.display = 'block';
+  document.getElementById('uploadBtn').disabled = true;
+  
+  const boxContainer = document.getElementById('boxContainer');
+  const successMessages = document.getElementById('successMessages');
+  
+  // Smart channel distribution - find next available channel
+  const channelData = JSON.parse(localStorage.getItem('channelData') || '{}');
+  if (!channelData[selectedChannel]) channelData[selectedChannel] = {};
+  
+  // Find next available channel number that's not full (50 videos max)
+  let targetChannelNum = 1;
+  while (channelData[selectedChannel][targetChannelNum] && channelData[selectedChannel][targetChannelNum].length >= 50) {
+    targetChannelNum++;
+  }
+  
+  if (!channelData[selectedChannel][targetChannelNum]) {
+    channelData[selectedChannel][targetChannelNum] = [];
+  }
+  
+  // Create boxes for each file
+  selectedFile.forEach((file, index) => {
+    const box = document.createElement('div');
+    box.id = `box-${index}`;
+    box.style.cssText = `
+      width:60px;height:60px;background:var(--primary);
+      border-radius:8px;display:flex;align-items:center;justify-content:center;
+      color:white;font-weight:bold;font-size:0.8rem;
+      animation:roll 2s infinite linear;
+      transform-origin:center;
+    `;
+    box.textContent = (index + 1);
+    boxContainer.appendChild(box);
+  });
+  
+  // Add rolling animation
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes roll {
+      0% { transform: rotate(0deg) translateX(0); }
+      100% { transform: rotate(360deg) translateX(20px); }
+    }
+    @keyframes disappear {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0); }
+    }
+  `;
+  document.head.appendChild(style);
+  
+  // Disappear boxes one by one
+  selectedFile.forEach((file, index) => {
+    setTimeout(() => {
+      const box = document.getElementById(`box-${index}`);
+      box.style.animation = 'disappear 0.5s ease-out forwards';
+      
+      setTimeout(() => {
+        box.remove();
+        const title = document.getElementById('videoTitle').value || file.name.replace(/\.[^/.]+$/, '');
+        
+        const channelName = getChannelName(selectedChannel, targetChannelNum);
+        const successMsg = document.createElement('div');
+        successMsg.style.cssText = 'color:var(--secondary);margin:0.5rem 0;animation:fadeIn 0.5s ease-in';
+        successMsg.innerHTML = `<i class="fas fa-check-circle"></i> ${file.name} uploaded to ${channelName}!`;
+        successMessages.appendChild(successMsg);
+        
+        // Store file data for playback
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          channelData[selectedChannel][targetChannelNum].push({
+            id: Date.now() + index,
+            title: title,
+            filename: file.name,
+            url: e.target.result,
+            uploadDate: new Date().toISOString(),
+            order: channelData[selectedChannel][targetChannelNum].length
+          });
+          localStorage.setItem('channelData', JSON.stringify(channelData));
+        };
+        reader.readAsDataURL(file);
+        
+        if (index === selectedFile.length - 1) {
+          setTimeout(() => {
+            window.location.href = 'admin.html';
+          }, 2000);
+        }
+      }, 500);
+    }, (index + 1) * 1000);
+  });
+  
+  const fadeStyle = document.createElement('style');
+  fadeStyle.textContent = `
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+  `;
+  document.head.appendChild(fadeStyle);
+}
+
+function getChannelName(category, channelNum) {
+  const channelNames = {
+    entertainment: [`Ey Movie ${channelNum}`, `Ey Series ${channelNum}`, `Ey Comedy ${channelNum}`],
+    news: [`Ey News ${channelNum}`, `Ey World ${channelNum}`, `Ey Update ${channelNum}`],
+    music: [`Ey Music ${channelNum}`, `Ey Beats ${channelNum}`, `Ey Sound ${channelNum}`],
+    sports: [`Ey Sports ${channelNum}`, `Ey Game ${channelNum}`, `Ey Match ${channelNum}`],
+    kids: [`Ey Kids ${channelNum}`, `Ey Cartoon ${channelNum}`, `Ey Fun ${channelNum}`],
+    christian: [`Ey Faith ${channelNum}`, `Ey Gospel ${channelNum}`, `Ey Praise ${channelNum}`]
+  };
+  
+  const names = channelNames[category] || [`Ey ${category} ${channelNum}`];
+  return names[Math.min(channelNum - 1, names.length - 1)];
+}
+
+function formatFileSize(bytes) {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// Add drag and drop support
+function setupDragDrop() {
+  const dropZone = document.querySelector('[onclick*="fileInput"]');
+  if (!dropZone) return;
+  
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, preventDefaults, false);
+  });
+  
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropZone.addEventListener(eventName, () => {
+      dropZone.style.borderColor = 'var(--secondary)';
+      dropZone.style.background = 'rgba(16, 185, 129, 0.1)';
+    });
+  });
+  
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, () => {
+      dropZone.style.borderColor = 'var(--dark-3)';
+      dropZone.style.background = 'transparent';
+    });
+  });
+  
+  dropZone.addEventListener('drop', (e) => {
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      document.getElementById('fileInput').files = files;
+      handleFileSelect({ target: { files: files } });
+    }
+  });
+}
+
+setInterval(updateClock, 1000);
+
+document.addEventListener('DOMContentLoaded', function() {
+  updateClock();
+  setupDragDrop();
+});
+</script>
+</body>
+</html>

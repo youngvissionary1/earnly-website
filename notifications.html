@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notifications - Earnly</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root {
+  --primary: #6366f1;
+  --secondary: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --dark-1: #111827;
+  --dark-2: #1f2937;
+  --dark-3: #374151;
+  --text-primary: #f3f4f6;
+  --text-secondary: #d1d5db;
+  --border-radius: 12px;
+  --transition: all 0.3s ease;
+  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, var(--dark-1) 0%, var(--dark-2) 100%);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+.header {
+  padding: 1rem 2rem;
+  background: rgba(31, 41, 55, 0.9);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--dark-3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.back-btn {
+  background: var(--dark-3);
+  color: var(--text-primary);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: var(--transition);
+}
+
+.back-btn:hover {
+  background: var(--primary);
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.notification-item {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--dark-3);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  transition: var(--transition);
+  position: relative;
+}
+
+.notification-item.unread {
+  border-left: 4px solid var(--primary);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.notification-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.notification-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  margin-right: 1rem;
+}
+
+.notification-icon.success {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--secondary);
+}
+
+.notification-icon.warning {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--warning);
+}
+
+.notification-icon.info {
+  background: rgba(99, 102, 241, 0.2);
+  color: var(--primary);
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.notification-message {
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.notification-time {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+.notification-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.action-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: var(--transition);
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-secondary {
+  background: var(--dark-3);
+  color: var(--text-primary);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-secondary);
+}
+
+.empty-state i {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.mark-all-read {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-bottom: 2rem;
+}
+
+.mark-all-read:hover {
+  background: var(--primary-dark);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .notification-item {
+    padding: 1rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <button class="back-btn" onclick="window.location.href='dashboard.html'">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h1 class="page-title">Notifications</h1>
+  </div>
+  <button class="mark-all-read" onclick="markAllAsRead()" id="markAllBtn">
+    <i class="fas fa-check-double"></i> Mark All Read
+  </button>
+</header>
+
+<div class="container">
+  <div class="notifications-list" id="notificationsList">
+    <div class="empty-state">
+      <i class="fas fa-bell"></i>
+      <p>Loading notifications...</p>
+    </div>
+  </div>
+</div>
+
+<script>
+let notifications = [];
+
+function initNotifications() {
+  loadNotifications();
+  markNotificationsAsViewed();
+}
+
+function loadNotifications() {
+  // Load from localStorage or create sample notifications
+  notifications = JSON.parse(localStorage.getItem('earnly_notifications') || '[]');
+  
+  // Add sample notifications if none exist
+  if (notifications.length === 0) {
+    notifications = [
+      {
+        id: '1',
+        type: 'success',
+        title: 'Welcome to Earnly!',
+        message: 'Your account has been created successfully. Start earning by completing tasks and claiming daily bonuses.',
+        timestamp: new Date().toISOString(),
+        read: false
+      },
+      {
+        id: '2',
+        type: 'info',
+        title: 'Daily Bonus Available',
+        message: 'Your daily bonus of $0.003 is ready to claim. Don\'t miss out on your daily reward!',
+        timestamp: new Date(Date.now() - 3600000).toISOString(),
+        read: false
+      },
+      {
+        id: '3',
+        type: 'warning',
+        title: 'Withdrawal Window',
+        message: 'Withdrawals are open from Friday 12am to Sunday 12am. Plan your cashouts accordingly.',
+        timestamp: new Date(Date.now() - 7200000).toISOString(),
+        read: true
+      }
+    ];
+    localStorage.setItem('earnly_notifications', JSON.stringify(notifications));
+  }
+  
+  displayNotifications();
+}
+
+function displayNotifications() {
+  const container = document.getElementById('notificationsList');
+  
+  if (notifications.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-bell-slash"></i>
+        <p>No notifications yet</p>
+      </div>
+    `;
+    return;
+  }
+  
+  // Sort by timestamp (newest first)
+  notifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  
+  container.innerHTML = notifications.map(notification => `
+    <div class="notification-item ${!notification.read ? 'unread' : ''}" onclick="markAsRead('${notification.id}')">
+      <div class="notification-header">
+        <div style="display: flex; align-items: flex-start;">
+          <div class="notification-icon ${notification.type}">
+            <i class="fas fa-${getNotificationIcon(notification.type)}"></i>
+          </div>
+          <div class="notification-content">
+            <div class="notification-title">${notification.title}</div>
+            <div class="notification-message">${notification.message}</div>
+            <div class="notification-time">${formatTime(notification.timestamp)}</div>
+          </div>
+        </div>
+        ${!notification.read ? '<div style="width: 8px; height: 8px; background: var(--primary); border-radius: 50%; margin-top: 0.5rem;"></div>' : ''}
+      </div>
+    </div>
+  `).join('');
+  
+  updateMarkAllButton();
+}
+
+function getNotificationIcon(type) {
+  switch (type) {
+    case 'success': return 'check-circle';
+    case 'warning': return 'exclamation-triangle';
+    case 'info': return 'info-circle';
+    default: return 'bell';
+  }
+}
+
+function formatTime(timestamp) {
+  const now = new Date();
+  const time = new Date(timestamp);
+  const diff = now - time;
+  
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  
+  if (minutes < 1) return 'Just now';
+  if (minutes < 60) return `${minutes}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  if (days < 7) return `${days}d ago`;
+  
+  return time.toLocaleDateString();
+}
+
+function markAsRead(notificationId) {
+  const notification = notifications.find(n => n.id === notificationId);
+  if (notification && !notification.read) {
+    notification.read = true;
+    localStorage.setItem('earnly_notifications', JSON.stringify(notifications));
+    displayNotifications();
+  }
+}
+
+function markAllAsRead() {
+  notifications.forEach(n => n.read = true);
+  localStorage.setItem('earnly_notifications', JSON.stringify(notifications));
+  displayNotifications();
+}
+
+function markNotificationsAsViewed() {
+  // This function is called when user visits notifications page
+  // It helps update the notification badge on dashboard
+  localStorage.setItem('earnly_notifications_viewed', Date.now().toString());
+}
+
+function updateMarkAllButton() {
+  const unreadCount = notifications.filter(n => !n.read).length;
+  const markAllBtn = document.getElementById('markAllBtn');
+  
+  if (unreadCount === 0) {
+    markAllBtn.style.display = 'none';
+  } else {
+    markAllBtn.style.display = 'block';
+    markAllBtn.innerHTML = `<i class="fas fa-check-double"></i> Mark All Read (${unreadCount})`;
+  }
+}
+
+// Add new notification function (can be called from other pages)
+function addNotification(type, title, message) {
+  const newNotification = {
+    id: Date.now().toString(),
+    type,
+    title,
+    message,
+    timestamp: new Date().toISOString(),
+    read: false
+  };
+  
+  notifications.unshift(newNotification);
+  localStorage.setItem('earnly_notifications', JSON.stringify(notifications));
+  
+  if (document.getElementById('notificationsList')) {
+    displayNotifications();
+  }
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', initNotifications);
+</script>
+
+</body>
+</html>

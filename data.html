@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buy Data - Earnly</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root {
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --secondary: #10b981;
+  --accent: #f59e0b;
+  --danger: #ef4444;
+  --dark-1: #111827;
+  --dark-2: #1f2937;
+  --dark-3: #374151;
+  --light-1: #f9fafb;
+  --light-2: #e5e7eb;
+  --text-primary: #f3f4f6;
+  --text-secondary: #d1d5db;
+  --border-radius: 12px;
+  --transition: all 0.3s ease;
+  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, var(--dark-1) 0%, var(--dark-2) 100%);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.back-btn {
+  background: var(--dark-3);
+  color: var(--text-primary);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: var(--transition);
+}
+
+.back-btn:hover {
+  background: var(--primary);
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--dark-3);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 2rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--dark-3);
+  border: 1px solid var(--dark-3);
+  border-radius: var(--border-radius);
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+}
+
+.plan-tabs {
+  display: flex;
+  background: var(--dark-3);
+  border-radius: var(--border-radius);
+  padding: 4px;
+  margin-bottom: 1.5rem;
+}
+
+.plan-tab {
+  flex: 1;
+  padding: 0.75rem;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: calc(var(--border-radius) - 4px);
+  transition: var(--transition);
+  font-weight: 500;
+}
+
+.plan-tab.active {
+  background: var(--primary);
+  color: white;
+}
+
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.plan-btn {
+  padding: 1rem;
+  background: var(--dark-3);
+  color: var(--text-primary);
+  border: 2px solid var(--dark-3);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+}
+
+.plan-btn:hover {
+  border-color: var(--primary);
+}
+
+.plan-btn.selected {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.plan-data {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.plan-price {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.plan-btn.selected .plan-price {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.custom-plan {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.custom-plan input {
+  flex: 1;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  box-shadow: var(--card-shadow);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 25px -5px rgba(99, 102, 241, 0.4);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.balance-info {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid var(--secondary);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.balance-amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--secondary);
+}
+
+.history-section {
+  background: var(--dark-3);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 1.5rem;
+}
+
+.history-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--dark-2);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.history-item:last-child {
+  border-bottom: none;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background: var(--dark-2);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 400px;
+  box-shadow: var(--shadow);
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--primary);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.btn-secondary {
+  background: var(--dark-3);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+  background: var(--dark-2);
+}
+
+#network {
+  background-repeat: no-repeat;
+  background-position: 12px center;
+  background-size: 20px 20px;
+  padding-left: 40px;
+}
+
+#network[data-selected="MTN"] {
+  background-image: url('./logos/mtn-logo.svg');
+}
+
+#network[data-selected="Airtel"] {
+  background-image: url('./logos/airtel-logo.svg');
+}
+
+#network[data-selected="Glo"] {
+  background-image: url('./logos/glo-logo.svg');
+}
+
+#network[data-selected="9mobile"] {
+  background-image: url('./logos/9mobile-logo.svg');
+}
+
+#network[data-selected=""] {
+  background-image: none;
+  padding-left: 12px;
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 1rem;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .plans-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .custom-plan {
+    flex-direction: column;
+  }
+  
+  .plan-tabs {
+    flex-wrap: wrap;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <button class="back-btn" onclick="window.location.href='dashboard.html'">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h1 class="page-title">
+      <i class="fas fa-database"></i>
+      Buy Data
+    </h1>
+  </div>
+
+  <div class="card">
+    <div class="balance-info">
+      <div style="color: var(--text-secondary); margin-bottom: 0.5rem;">Available Balance</div>
+      <div class="balance-amount" id="availableBalance">$0.000</div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="network">Network</label>
+        <select id="network" class="form-control" required onchange="loadNetworkPlans(); updateNetworkLogo(this)">
+          <option value="">Select Network</option>
+          <option value="MTN">MTN</option>
+          <option value="Airtel">AIRTEL</option>
+          <option value="Glo">GLO</option>
+          <option value="9mobile">9MOBILE</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="phoneNumber">Phone Number</label>
+        <input type="tel" id="phoneNumber" class="form-control" placeholder="Enter phone number" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Plan Type</label>
+      <div class="plan-tabs">
+        <button class="plan-tab active" data-plan="daily" onclick="switchPlan('daily')">Daily</button>
+        <button class="plan-tab" data-plan="weekly" onclick="switchPlan('weekly')">Weekly</button>
+        <button class="plan-tab" data-plan="monthly" onclick="switchPlan('monthly')">Monthly</button>
+        <button class="plan-tab" data-plan="hotdeal" onclick="switchPlan('hotdeal')">Hot Deal</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Select Data Plan</label>
+      <div class="plans-grid" id="plansGrid"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="customPlan">Or Enter Custom Plan</label>
+      <div class="custom-plan">
+        <input type="text" id="customPlan" class="form-control" placeholder="e.g., 1GB - ₦500" readonly>
+        <button class="btn btn-primary" id="purchaseBtn" onclick="purchaseData()">
+          <i class="fas fa-shopping-cart"></i> Purchase
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+      <i class="fas fa-history"></i>
+      Recent Purchases
+    </h3>
+    <div class="history-section" id="historySection">
+      <div style="text-align: center; color: var(--text-secondary);">
+        No purchase history yet
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="modal">
+  <div class="modal-content">
+    <h3 class="modal-title">Confirm Purchase</h3>
+    <div id="confirmDetails"></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="confirmPurchase()">
+        <i class="fas fa-check"></i> Confirm
+      </button>
+      <button class="btn btn-secondary" onclick="closeModal()">
+        <i class="fas fa-times"></i> Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="js/themes.js"></script>
+<script src="js/api.js"></script>
+<script>
+let currentUser = null;
+let selectedPlan = null;
+let currentPlanType = 'daily';
+
+const networkPlans = {
+  MTN: {
+    daily: [
+      { data: '75MB', price: 75 },
+      { data: '110MB', price: 100 },
+      { data: '230MB', price: 200 },
+      { data: '500MB', price: 350 },
+      { data: '1GB + voice', price: 500 },
+      { data: '2.5GB Digital', price: 750 }
+    ],
+    weekly: [
+      { data: '1.5GB (2-day)', price: 600 },
+      { data: '2GB (2-day)', price: 750 },
+      { data: '500MB', price: 500 },
+      { data: '1GB', price: 800 },
+      { data: '1.5GB', price: 1000 },
+      { data: '3.5GB', price: 1500 },
+      { data: '6GB', price: 2500 },
+      { data: '11GB', price: 3500 },
+      { data: '20GB Digital', price: 5000 }
+    ],
+    monthly: [
+      { data: '2GB + voice', price: 1500 },
+      { data: '2.7GB + voice', price: 2000 },
+      { data: '3.5GB + voice', price: 2500 },
+      { data: '7GB', price: 3500 },
+      { data: '10GB + voice', price: 4500 },
+      { data: '12.5GB', price: 5500 },
+      { data: '16.5GB + voice', price: 6500 },
+      { data: '18.6GB Always On', price: 5500 },
+      { data: '20GB', price: 7500 },
+      { data: '25GB', price: 9000 },
+      { data: '36GB', price: 11000 },
+      { data: '45GB Always On', price: 9000 },
+      { data: '65GB', price: 16000 },
+      { data: '75GB', price: 18000 },
+      { data: '165GB', price: 35000 },
+      { data: '250GB', price: 55000 }
+    ],
+    hotdeal: [
+      { data: '90GB (60 days)', price: 25000 },
+      { data: '150GB (60 days)', price: 40000 },
+      { data: '480GB (90 days)', price: 90000 },
+      { data: '800GB (365 days)', price: 125000 }
+    ]
+  },
+  Airtel: {
+    daily: [
+      { data: '40MB', price: 50 },
+      { data: '75MB', price: 75 },
+      { data: '100MB', price: 100 },
+      { data: '200MB (3 days)', price: 200 },
+      { data: '1GB', price: 350 }
+    ],
+    weekly: [
+      { data: '350MB', price: 350 },
+      { data: '500MB + bonuses', price: 500 },
+      { data: '1GB', price: 800 },
+      { data: '3.5GB', price: 1500 },
+      { data: '6GB + streaming', price: 2500 }
+    ],
+    monthly: [
+      { data: '2GB', price: 1500 },
+      { data: '3GB', price: 2000 },
+      { data: '4GB', price: 2500 },
+      { data: '8GB', price: 3000 },
+      { data: '10GB', price: 4000 },
+      { data: '13GB', price: 5000 },
+      { data: '18GB', price: 6000 },
+      { data: '25GB', price: 8000 }
+    ],
+    hotdeal: [
+      { data: '300GB (90 days)', price: 50000 },
+      { data: '350GB (120 days)', price: 60000 },
+      { data: '650GB (365 days)', price: 100000 }
+    ]
+  },
+  Glo: {
+    daily: [
+      { data: '50MB', price: 50 },
+      { data: '150MB', price: 100 },
+      { data: '1GB Daily Splash', price: 300 },
+      { data: '2GB', price: 500 }
+    ],
+    weekly: [
+      { data: '350MB (2 days)', price: 200 },
+      { data: '1.8GB (14 days)', price: 500 },
+      { data: '7GB', price: 1500 }
+    ],
+    monthly: [
+      { data: '3.9GB', price: 1000 },
+      { data: '7.5GB', price: 1500 },
+      { data: '9.2GB', price: 2000 },
+      { data: '10.8GB', price: 2500 },
+      { data: '14GB', price: 3000 },
+      { data: '18GB', price: 4000 },
+      { data: '24GB', price: 5000 },
+      { data: '29.5GB', price: 8000 },
+      { data: '50GB', price: 10000 },
+      { data: '93GB', price: 15000 },
+      { data: '119GB', price: 18000 },
+      { data: '138GB', price: 20000 }
+    ],
+    hotdeal: [
+      { data: '225GB', price: 30000 },
+      { data: '300GB', price: 36000 },
+      { data: '425GB', price: 50000 },
+      { data: '525GB (120 days)', price: 60000 },
+      { data: '675GB (120 days)', price: 75000 },
+      { data: '1TB (365 days)', price: 100000 }
+    ]
+  },
+  '9mobile': {
+    daily: [
+      { data: '10MB', price: 50 },
+      { data: '40MB', price: 100 },
+      { data: '1GB', price: 300 }
+    ],
+    weekly: [
+      { data: '2GB + Social (3 days)', price: 500 },
+      { data: '150MB', price: 200 },
+      { data: '1GB + Social', price: 500 },
+      { data: '7GB + Social', price: 1500 }
+    ],
+    monthly: [
+      { data: '500MB', price: 500 },
+      { data: '1GB', price: 1000 },
+      { data: '1.5GB', price: 1200 },
+      { data: '5.5GB', price: 2000 },
+      { data: '11.5GB', price: 8000 },
+      { data: '15GB', price: 10000 }
+    ],
+    hotdeal: [
+      { data: '30GB (90 days)', price: 25000 },
+      { data: '60GB (120 days)', price: 55000 },
+      { data: '100GB (365 days)', price: 100000 }
+    ]
+  }
+};
+
+// Initialize page
+async function initData() {
+  try {
+    if (!api.isAuthenticated()) {
+      window.location.href = 'auth.html';
+      return;
+    }
+
+    // Load user profile and balance
+    const profileResponse = await api.getProfile();
+    currentUser = profileResponse.user;
+    
+    const balanceResponse = await api.getBalance();
+    const totalBalance = balanceResponse.balances.task + balanceResponse.balances.dailyBonus + balanceResponse.balances.referral;
+    document.getElementById('availableBalance').textContent = `$${totalBalance.toFixed(3)}`;
+    
+    // Pre-fill phone number if available
+    if (currentUser.phone) {
+      document.getElementById('phoneNumber').value = currentUser.phone;
+    }
+    
+    // Load purchase history
+    loadPurchaseHistory();
+    
+    // Load default plans - will show message to select network first
+    loadNetworkPlans();
+    
+  } catch (error) {
+    console.error('Data page initialization failed:', error);
+    showMessage('Failed to load page data', 'error');
+  }
+}
+
+function loadNetworkPlans() {
+  const network = document.getElementById('network').value;
+  if (network && networkPlans[network]) {
+    loadPlans(currentPlanType);
+  } else {
+    document.getElementById('plansGrid').innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 2rem;">Please select a network first</div>';
+  }
+}
+
+function switchPlan(planType) {
+  document.querySelectorAll('.plan-tab').forEach(tab => tab.classList.remove('active'));
+  document.querySelector(`[data-plan="${planType}"]`).classList.add('active');
+  
+  currentPlanType = planType;
+  loadPlans(planType);
+  
+  selectedPlan = null;
+  document.getElementById('customPlan').value = '';
+}
+
+function loadPlans(planType) {
+  const network = document.getElementById('network').value;
+  const plansGrid = document.getElementById('plansGrid');
+  
+  if (!network || !networkPlans[network]) {
+    plansGrid.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 2rem;">Please select a network first</div>';
+    return;
+  }
+  
+  const plans = networkPlans[network][planType];
+  
+  plansGrid.innerHTML = plans.map(plan => `
+    <button class="plan-btn" onclick="selectPlan('${plan.data}', ${plan.price})">
+      <div class="plan-data">${plan.data}</div>
+      <div class="plan-price">₦${plan.price.toLocaleString()}</div>
+    </button>
+  `).join('');
+}
+
+function selectPlan(data, price) {
+  // Remove selected class from all plans
+  document.querySelectorAll('.plan-btn').forEach(btn => btn.classList.remove('selected'));
+  
+  // Add selected class to clicked plan
+  event.target.classList.add('selected');
+  
+  // Set selected plan
+  selectedPlan = { data, price };
+  document.getElementById('customPlan').value = `${data} - ₦${price.toLocaleString()}`;
+}
+
+async function purchaseData() {
+  try {
+    const network = document.getElementById('network').value;
+    const phone = document.getElementById('phoneNumber').value;
+    
+    if (!network || !phone || !selectedPlan) {
+      showMessage('Please fill all fields and select a data plan', 'error');
+      return;
+    }
+    
+    // Convert NGN to USD (approximate rate)
+    const usdAmount = selectedPlan.price / 1500; // Rough conversion rate
+    
+    // Show enhanced confirmation modal
+    document.getElementById('confirmDetails').innerHTML = `
+      <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem;">
+        <div style="text-align: center; margin-bottom: 1rem;">
+          <div style="color: var(--primary); font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem;">
+            <i class="fas fa-database"></i> Earnly Data Purchase
+          </div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">${new Date().toLocaleDateString()}</div>
+        </div>
+        <div style="display: grid; gap: 0.75rem;">
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--text-secondary);">Network:</span>
+            <span style="font-weight: 600;">${network}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--text-secondary);">Phone Number:</span>
+            <span style="font-weight: 600;">${phone}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--text-secondary);">Data Plan:</span>
+            <span style="font-weight: 600; color: var(--secondary);">${selectedPlan.data}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--text-secondary);">Plan Cost:</span>
+            <span style="font-weight: 600; color: var(--secondary);">₦${selectedPlan.price.toLocaleString()}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--text-secondary);">Amount to Pay:</span>
+            <span style="font-weight: 600; color: var(--primary);">$${usdAmount.toFixed(3)}</span>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.getElementById('confirmModal').style.display = 'flex';
+    
+  } catch (error) {
+    showMessage('Failed to process purchase', 'error');
+  }
+}
+
+async function confirmPurchase() {
+  try {
+    // Request password first
+    const password = prompt('Enter your password to confirm purchase:');
+    if (!password) {
+      showMessage('Password required to complete purchase', 'error');
+      return;
+    }
+    
+    const btn = document.querySelector('#confirmModal .btn-primary');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    btn.disabled = true;
+    
+    const network = document.getElementById('network').value;
+    const phone = document.getElementById('phoneNumber').value;
+    const usdAmount = selectedPlan.price / 1500; // Convert to USD
+    
+    // Check balance first
+    const balanceResponse = await api.getBalance();
+    const totalBalance = balanceResponse.balances.task + balanceResponse.balances.dailyBonus + balanceResponse.balances.referral;
+    if (totalBalance < usdAmount) {
+      throw new Error('Insufficient balance');
+    }
+    
+    const purchaseData = {
+      type: 'data',
+      network: network,
+      phone: phone,
+      amount: usdAmount,
+      plan: selectedPlan.data
+    };
+    
+    const response = await api.purchase(purchaseData);
+    
+    // Show success with receipt
+    closeModal();
+    showReceipt({
+      type: 'Data Purchase',
+      network: network,
+      phone: phone,
+      plan: selectedPlan.data,
+      amount: selectedPlan.price,
+      usdAmount: usdAmount,
+      status: 'Successful',
+      date: new Date().toLocaleString(),
+      transactionId: 'TXN' + Date.now()
+    });
+    
+    // Add to history
+    addToHistory({
+      network: network,
+      phone: phone,
+      plan: selectedPlan.data,
+      amount: selectedPlan.price,
+      date: new Date().toLocaleString(),
+      status: 'Successful'
+    });
+    
+    // Update balance
+    const newBalanceResponse = await api.getBalance();
+    const newTotalBalance = newBalanceResponse.balances.task + newBalanceResponse.balances.dailyBonus + newBalanceResponse.balances.referral;
+    document.getElementById('availableBalance').textContent = `$${newTotalBalance.toFixed(3)}`;
+    
+    // Reset form
+    document.getElementById('customPlan').value = '';
+    selectedPlan = null;
+    document.querySelectorAll('.plan-btn').forEach(btn => btn.classList.remove('selected'));
+    
+  } catch (error) {
+    showMessage(error.message, 'error');
+    
+    const btn = document.querySelector('#confirmModal .btn-primary');
+    btn.innerHTML = '<i class="fas fa-check"></i> Confirm';
+    btn.disabled = false;
+  }
+}
+
+function closeModal() {
+  document.getElementById('confirmModal').style.display = 'none';
+}
+
+function addToHistory(purchase) {
+  let history = JSON.parse(localStorage.getItem('earnly_data_history') || '[]');
+  history.unshift(purchase);
+  
+  // Keep only last 10 purchases
+  if (history.length > 10) {
+    history = history.slice(0, 10);
+  }
+  
+  localStorage.setItem('earnly_data_history', JSON.stringify(history));
+  loadPurchaseHistory();
+}
+
+function loadPurchaseHistory() {
+  const history = JSON.parse(localStorage.getItem('earnly_data_history') || '[]');
+  const historySection = document.getElementById('historySection');
+  
+  if (history.length === 0) {
+    historySection.innerHTML = '<div style="text-align: center; color: var(--text-secondary);">No purchase history yet</div>';
+    return;
+  }
+  
+  historySection.innerHTML = history.map(item => `
+    <div class="history-item">
+      ${item.date} | ${item.network} ${item.phone} | ${item.plan} | ₦${item.amount.toLocaleString()} | ${item.status}
+    </div>
+  `).join('');
+}
+
+function showReceipt(data) {
+  const receiptModal = document.createElement('div');
+  receiptModal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    backdrop-filter: blur(5px);
+  `;
+  
+  receiptModal.innerHTML = `
+    <div style="background: var(--dark-2); padding: 2rem; border-radius: 16px; width: 90%; max-width: 400px; border: 1px solid var(--dark-3);">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <div style="color: var(--secondary); font-size: 3rem; margin-bottom: 1rem;">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h2 style="color: var(--secondary); margin-bottom: 0.5rem;">Transaction Successful!</h2>
+        <p style="color: var(--text-secondary);">Your ${data.type.toLowerCase()} has been processed</p>
+      </div>
+      
+      <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+        <div style="text-align: center; margin-bottom: 1rem;">
+          <div style="color: var(--primary); font-weight: 600; margin-bottom: 0.5rem;">EARNLY RECEIPT</div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">${data.date}</div>
+        </div>
+        
+        <div style="display: grid; gap: 0.5rem; font-size: 0.9rem;">
+          <div style="display: flex; justify-content: space-between;">
+            <span>Transaction ID:</span>
+            <span style="font-weight: 600;">${data.transactionId}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Service:</span>
+            <span style="font-weight: 600;">${data.type}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Network:</span>
+            <span style="font-weight: 600;">${data.network}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Phone:</span>
+            <span style="font-weight: 600;">${data.phone}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Data Plan:</span>
+            <span style="font-weight: 600; color: var(--secondary);">${data.plan}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Plan Cost:</span>
+            <span style="font-weight: 600; color: var(--secondary);">₦${data.amount.toLocaleString()}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Paid:</span>
+            <span style="font-weight: 600; color: var(--primary);">$${data.usdAmount.toFixed(3)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Status:</span>
+            <span style="font-weight: 600; color: var(--secondary);">${data.status}</span>
+          </div>
+        </div>
+      </div>
+      
+      <button onclick="this.parentElement.parentElement.remove()" style="width: 100%; padding: 0.75rem; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+        <i class="fas fa-check"></i> Done
+      </button>
+    </div>
+  `;
+  
+  document.body.appendChild(receiptModal);
+}
+
+function updateNetworkLogo(select) {
+  select.setAttribute('data-selected', select.value);
+}
+
+function showMessage(text, type = 'error') {
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px 24px;
+    border-radius: 12px;
+    color: white;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease;
+    background: ${type === 'success' ? 'var(--secondary)' : 'var(--danger)'};
+  `;
+  
+  notification.innerHTML = `
+    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+    <span>${text}</span>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    document.body.removeChild(notification);
+  }, 3000);
+}
+
+// Initialize page when loaded
+document.addEventListener('DOMContentLoaded', function() {
+  initData();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Access - Earnly</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root {
+  --primary: #6366f1;
+  --secondary: #10b981;
+  --danger: #ef4444;
+  --dark-1: #111827;
+  --dark-2: #1f2937;
+  --dark-3: #374151;
+  --text-primary: #f3f4f6;
+  --text-secondary: #d1d5db;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, var(--dark-1) 0%, var(--dark-2) 100%);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.access-container {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--dark-3);
+  border-radius: 12px;
+  padding: 2.5rem;
+  width: 90%;
+  max-width: 420px;
+  text-align: center;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+  margin: 1rem;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.passkey-input {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.3rem;
+  text-align: center;
+  letter-spacing: 0.3rem;
+  background: var(--dark-3);
+  border: 2px solid var(--dark-3);
+  border-radius: 8px;
+  color: var(--text-primary);
+  margin: 1.5rem 0;
+  transition: all 0.3s ease;
+}
+
+.passkey-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+}
+
+.passkey-input.success {
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+}
+
+.passkey-input.error {
+  border-color: var(--danger);
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.success-mark {
+  display: none;
+  font-size: 4rem;
+  color: var(--secondary);
+  margin: 2rem 0;
+  animation: successPop 0.6s ease-out;
+}
+
+@keyframes successPop {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.btn {
+  width: 100%;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 25px -5px rgba(99, 102, 241, 0.4);
+}
+
+.door-animation {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.animation-scene {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.door {
+  width: 200px;
+  height: 300px;
+  background: linear-gradient(145deg, #8B4513, #A0522D);
+  border-radius: 15px;
+  position: relative;
+  border: 4px solid #654321;
+  transform-origin: left center;
+  transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.door.opening {
+  transform: perspective(800px) rotateY(-110deg);
+}
+
+.door-handle {
+  width: 15px;
+  height: 15px;
+  background: radial-gradient(circle, #FFD700, #FFA500);
+  border-radius: 50%;
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.door.opening .door-handle {
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.door-panels {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+  border: 2px solid #654321;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #A0522D, #8B4513);
+}
+
+.door-panels::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  right: 5px;
+  height: 2px;
+  background: #654321;
+  transform: translateY(-50%);
+}
+
+.door-panels::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 5px;
+  bottom: 5px;
+  width: 2px;
+  background: #654321;
+  transform: translateX(-50%);
+}
+
+.hand-with-key {
+  position: absolute;
+  right: -120px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2.5rem;
+  opacity: 0;
+  z-index: 10;
+}
+
+.hand-with-key.animate {
+  animation: unlockSequence 4s ease-in-out;
+}
+
+@keyframes unlockSequence {
+  0% { 
+    opacity: 0; 
+    right: -120px; 
+    transform: translateY(-50%) rotate(0deg);
+  }
+  15% { 
+    opacity: 1; 
+    right: -60px; 
+  }
+  30% { 
+    right: -30px; 
+    transform: translateY(-50%) rotate(-15deg);
+  }
+  45% { 
+    right: -25px; 
+    transform: translateY(-50%) rotate(15deg);
+  }
+  60% { 
+    right: -25px; 
+    transform: translateY(-50%) rotate(-10deg);
+  }
+  75% { 
+    right: -30px; 
+    transform: translateY(-50%) rotate(0deg);
+  }
+  90% { 
+    right: -60px; 
+  }
+  100% { 
+    opacity: 0; 
+    right: -120px; 
+    transform: translateY(-50%) rotate(0deg);
+  }
+}
+
+.door-glow {
+  position: absolute;
+  width: 220px;
+  height: 320px;
+  background: radial-gradient(ellipse, rgba(16, 185, 129, 0.3), transparent);
+  border-radius: 15px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.door-glow.active {
+  opacity: 1;
+}
+
+.admin-entrance {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--dark-1), var(--dark-2));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateX(0);
+  opacity: 0;
+  transition: all 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.admin-entrance.entering {
+  left: 0;
+  opacity: 1;
+}
+
+.admin-welcome {
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.admin-welcome h2 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.admin-welcome p {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+
+.back-btn {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  background: var(--dark-3);
+  color: var(--text-primary);
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background: var(--primary);
+}
+</style>
+</head>
+<body>
+
+<button class="back-btn" onclick="window.location.href='dashboard.html'">
+  <i class="fas fa-arrow-left"></i>
+</button>
+
+<div class="access-container" id="accessContainer">
+  <div class="logo">
+    <i class="fas fa-shield-alt"></i> Admin Access
+  </div>
+  <h2>Enter Admin Passkey</h2>
+  <p style="color: var(--text-secondary); margin-bottom: 2rem;">Authorized personnel only</p>
+  
+  <input type="password" id="passkeyInput" class="passkey-input" placeholder="Enter passkey" maxlength="6" value="">
+  
+  <div class="success-mark" id="successMark">
+    <i class="fas fa-check-circle"></i>
+  </div>
+  
+  <button class="btn" onclick="verifyPasskey()">
+    <i class="fas fa-key"></i> Access Admin Panel
+  </button>
+</div>
+
+<div id="doorAnimation" class="door-animation">
+  <div class="animation-scene">
+    <div class="door-glow" id="doorGlow"></div>
+    <div class="door" id="door">
+      <div class="door-panels"></div>
+      <div class="door-handle"></div>
+    </div>
+    <div class="hand-with-key" id="handWithKey">🖐️🔑</div>
+  </div>
+  <div class="admin-entrance" id="adminEntrance">
+    <div class="admin-welcome">
+      <h2>🚪 Welcome Admin</h2>
+      <p>Entering Admin Dashboard...</p>
+    </div>
+  </div>
+</div>
+
+<script>
+function verifyPasskey() {
+  const passkey = document.getElementById('passkeyInput').value;
+  const input = document.getElementById('passkeyInput');
+  
+  if (passkey === '141612') {
+    input.classList.add('success');
+    document.getElementById('successMark').style.display = 'block';
+    setTimeout(startDoorAnimation, 1500);
+  } else {
+    input.classList.add('error');
+    input.value = '';
+    setTimeout(() => input.classList.remove('error'), 500);
+  }
+}
+
+function startDoorAnimation() {
+  document.getElementById('accessContainer').style.display = 'none';
+  document.getElementById('doorAnimation').style.display = 'flex';
+  
+  setTimeout(() => {
+    document.getElementById('handWithKey').classList.add('animate');
+    document.getElementById('doorGlow').classList.add('active');
+  }, 500);
+  
+  setTimeout(() => {
+    document.getElementById('door').classList.add('opening');
+  }, 2500);
+  
+  setTimeout(() => {
+    document.getElementById('adminEntrance').classList.add('entering');
+  }, 4000);
+  
+  setTimeout(() => {
+    window.location.href = 'admin.html';
+  }, 6000);
+}
+
+document.getElementById('passkeyInput').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') verifyPasskey();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('passkeyInput').focus();
+});
+</script>
+
+</body>
+</html>

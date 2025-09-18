@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings - Earnly</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root {
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --secondary: #10b981;
+  --accent: #f59e0b;
+  --danger: #ef4444;
+  --dark-1: #111827;
+  --dark-2: #1f2937;
+  --dark-3: #374151;
+  --light-1: #f9fafb;
+  --light-2: #e5e7eb;
+  --text-primary: #f3f4f6;
+  --text-secondary: #d1d5db;
+  --border-radius: 12px;
+  --transition: all 0.3s ease;
+  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, var(--dark-1) 0%, var(--dark-2) 100%);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.back-btn {
+  background: var(--dark-3);
+  color: var(--text-primary);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: var(--transition);
+}
+
+.back-btn:hover {
+  background: var(--primary);
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.settings-grid {
+  display: grid;
+  gap: 2rem;
+}
+
+.settings-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--dark-3);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  box-shadow: var(--card-shadow);
+}
+
+.card-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-description {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.theme-option {
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+  border: 2px solid transparent;
+  text-align: center;
+  background: var(--dark-3);
+}
+
+.theme-option:hover {
+  transform: scale(1.05);
+}
+
+.theme-option.active {
+  border-color: var(--primary);
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.theme-preview {
+  width: 100%;
+  height: 60px;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--dark-3);
+  border: 1px solid var(--dark-3);
+  border-radius: var(--border-radius);
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  box-shadow: var(--card-shadow);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 25px -5px rgba(99, 102, 241, 0.4);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--dark-3);
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--primary);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--dark-3);
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+}
+
+.setting-info h4 {
+  margin-bottom: 0.25rem;
+}
+
+.setting-info p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.profile-section {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.profile-avatar {
+  text-align: center;
+}
+
+.avatar-preview {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: 700;
+  color: white;
+  margin: 0 auto 1rem;
+}
+
+.avatar-upload {
+  display: none;
+}
+
+.upload-btn {
+  background: var(--dark-3);
+  color: var(--text-primary);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.upload-btn:hover {
+  background: var(--primary);
+}
+
+.password-input {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.password-toggle:hover {
+  color: var(--primary);
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background: var(--dark-2);
+  margin: 15% auto;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  border: 1px solid var(--dark-3);
+  box-shadow: var(--shadow);
+}
+
+.modal h3 {
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.modal p {
+  margin-bottom: 2rem;
+  color: var(--text-secondary);
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.btn-secondary {
+  background: var(--dark-3);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+  background: var(--primary);
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 1rem;
+  }
+  
+  .theme-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .profile-section {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <button class="back-btn" onclick="window.location.href='dashboard.html'">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h1 class="page-title">Settings</h1>
+  </div>
+
+  <div class="settings-grid">
+    <!-- Theme Settings -->
+    <div class="settings-card">
+      <h2 class="card-title">
+        <i class="fas fa-palette"></i>
+        Theme Preferences
+      </h2>
+      <p class="card-description">Choose your preferred theme to customize the appearance of Earnly</p>
+      
+      <div class="theme-grid" id="themeGrid"></div>
+    </div>
+
+    <!-- Profile Settings -->
+    <div class="settings-card">
+      <h2 class="card-title">
+        <i class="fas fa-user"></i>
+        Profile Settings
+      </h2>
+      <p class="card-description">Update your personal information and profile details</p>
+      
+      <div class="profile-section">
+        <div class="profile-avatar">
+          <div class="avatar-preview" id="avatarPreview">JD</div>
+          <input type="file" id="avatarUpload" class="avatar-upload" accept="image/*">
+          <button class="upload-btn" onclick="document.getElementById('avatarUpload').click()">
+            <i class="fas fa-camera"></i> Change Photo
+          </button>
+        </div>
+        
+        <div class="profile-form">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" class="form-control" placeholder="Enter username">
+          </div>
+          
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" class="form-control" placeholder="Enter email" disabled>
+          </div>
+          
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" class="form-control" placeholder="Enter phone number">
+          </div>
+          
+          <button class="btn btn-primary" onclick="updateProfile()">
+            <i class="fas fa-save"></i> Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Settings -->
+    <div class="settings-card">
+      <h2 class="card-title">
+        <i class="fas fa-bell"></i>
+        Notifications
+      </h2>
+      <p class="card-description">Manage your notification preferences</p>
+      
+      <div class="setting-item">
+        <div class="setting-info">
+          <h4>Daily Bonus Reminders</h4>
+          <p>Get notified when your daily bonus is available</p>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="dailyBonusNotif" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      
+      <div class="setting-item">
+        <div class="setting-info">
+          <h4>Task Completion</h4>
+          <p>Receive notifications when tasks are completed</p>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="taskNotif" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      
+      <div class="setting-item">
+        <div class="setting-info">
+          <h4>Withdrawal Updates</h4>
+          <p>Get updates on withdrawal status</p>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="withdrawalNotif" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Security Settings -->
+    <div class="settings-card">
+      <h2 class="card-title">
+        <i class="fas fa-shield-alt"></i>
+        Security
+      </h2>
+      <p class="card-description">Manage your account security settings</p>
+      
+      <div class="form-group">
+        <label for="currentPassword">Current Password</label>
+        <div class="password-input">
+          <input type="password" id="currentPassword" class="form-control" placeholder="Enter current password">
+          <button type="button" class="password-toggle" onclick="togglePassword('currentPassword')">
+            <i class="fas fa-eye" id="currentPasswordEye"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="newPassword">New Password</label>
+        <div class="password-input">
+          <input type="password" id="newPassword" class="form-control" placeholder="Enter new password">
+          <button type="button" class="password-toggle" onclick="togglePassword('newPassword')">
+            <i class="fas fa-eye" id="newPasswordEye"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="confirmPassword">Confirm New Password</label>
+        <div class="password-input">
+          <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm new password">
+          <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
+            <i class="fas fa-eye" id="confirmPasswordEye"></i>
+          </button>
+        </div>
+      </div>
+      
+      <button class="btn btn-primary" onclick="changePassword()">
+        <i class="fas fa-key"></i> Change Password
+      </button>
+    </div>
+
+    <!-- Account Actions -->
+    <div class="settings-card">
+      <h2 class="card-title">
+        <i class="fas fa-exclamation-triangle"></i>
+        Account Actions
+      </h2>
+      <p class="card-description">Manage your account settings and data</p>
+      
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <button class="btn btn-primary" onclick="exportData()">
+          <i class="fas fa-download"></i> Export Data
+        </button>
+        
+        <button class="btn btn-secondary" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+        
+        <button class="btn btn-danger" onclick="deleteAccount()">
+          <i class="fas fa-trash"></i> Delete Account
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Logout Confirmation Modal -->
+<div id="logoutModal" class="modal">
+  <div class="modal-content">
+    <h3><i class="fas fa-sign-out-alt"></i> Confirm Logout</h3>
+    <p>Are you sure you want to log out of your account?</p>
+    <div class="modal-buttons">
+      <button class="btn btn-secondary" onclick="closeLogoutModal()">No</button>
+      <button class="btn btn-danger" onclick="confirmLogout()">Yes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Account Modal -->
+<div id="deleteModal" class="modal">
+  <div class="modal-content">
+    <h3><i class="fas fa-trash"></i> Delete Account</h3>
+    <p>Enter your password to confirm account deletion:</p>
+    <div class="form-group">
+      <div class="password-input">
+        <input type="password" id="deletePassword" class="form-control" placeholder="Enter your password">
+        <button type="button" class="password-toggle" onclick="togglePassword('deletePassword')">
+          <i class="fas fa-eye" id="deletePasswordEye"></i>
+        </button>
+      </div>
+    </div>
+    <div class="modal-buttons">
+      <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDelete()">Delete Account</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/themes.js"></script>
+<script src="js/api.js"></script>
+<script>
+let currentUser = null;
+
+// Initialize settings page
+async function initSettings() {
+  try {
+    if (!api.isAuthenticated()) {
+      window.location.href = 'auth.html';
+      return;
+    }
+
+    // Load user profile
+    const profileResponse = await api.getProfile();
+    currentUser = profileResponse.user;
+    
+    // Populate form fields
+    document.getElementById('username').value = currentUser.username;
+    document.getElementById('email').value = currentUser.email;
+    document.getElementById('phone').value = currentUser.phone || '';
+    document.getElementById('avatarPreview').textContent = currentUser.username.charAt(0).toUpperCase();
+    
+    // Render themes
+    renderThemes();
+    
+    // Load notification settings
+    loadNotificationSettings();
+    
+  } catch (error) {
+    console.error('Settings initialization failed:', error);
+    showMessage('Failed to load settings', 'error');
+  }
+}
+
+function renderThemes() {
+  const grid = document.getElementById('themeGrid');
+  const currentTheme = themeManager.getCurrentTheme();
+  const allThemes = themeManager.getThemes();
+  
+  grid.innerHTML = '';
+  
+  Object.entries(allThemes).forEach(([key, theme]) => {
+    const div = document.createElement('div');
+    div.className = `theme-option ${key === currentTheme ? 'active' : ''}`;
+    div.innerHTML = `
+      <div class="theme-preview" style="background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%);">
+        ${theme.name}
+      </div>
+    `;
+    div.onclick = () => {
+      themeManager.applyTheme(key);
+      renderThemes();
+      showMessage('Theme updated successfully!', 'success');
+    };
+    grid.appendChild(div);
+  });
+}
+
+function loadNotificationSettings() {
+  const settings = JSON.parse(localStorage.getItem('earnly_notification_settings') || '{}');
+  
+  document.getElementById('dailyBonusNotif').checked = settings.dailyBonus !== false;
+  document.getElementById('taskNotif').checked = settings.tasks !== false;
+  document.getElementById('withdrawalNotif').checked = settings.withdrawals !== false;
+}
+
+function saveNotificationSettings() {
+  const settings = {
+    dailyBonus: document.getElementById('dailyBonusNotif').checked,
+    tasks: document.getElementById('taskNotif').checked,
+    withdrawals: document.getElementById('withdrawalNotif').checked
+  };
+  
+  localStorage.setItem('earnly_notification_settings', JSON.stringify(settings));
+  showMessage('Notification settings saved!', 'success');
+}
+
+async function updateProfile() {
+  try {
+    const username = document.getElementById('username').value;
+    const phone = document.getElementById('phone').value;
+    
+    if (!username.trim()) {
+      showMessage('Username is required', 'error');
+      return;
+    }
+    
+    // Update localStorage and current user
+    currentUser.username = username;
+    currentUser.phone = phone;
+    localStorage.setItem('earnly_user', JSON.stringify(currentUser));
+    
+    document.getElementById('avatarPreview').textContent = username.charAt(0).toUpperCase();
+    
+    showMessage('Profile updated and saved successfully!', 'success');
+    
+  } catch (error) {
+    showMessage('Failed to update profile', 'error');
+  }
+}
+
+async function changePassword() {
+  try {
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      showMessage('All password fields are required', 'error');
+      return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+      showMessage('New passwords do not match', 'error');
+      return;
+    }
+    
+    if (newPassword.length < 6) {
+      showMessage('Password must be at least 6 characters', 'error');
+      return;
+    }
+    
+    // Here you would typically make an API call to change the password
+    showMessage('Password changed successfully!', 'success');
+    
+    // Clear password fields
+    document.getElementById('currentPassword').value = '';
+    document.getElementById('newPassword').value = '';
+    document.getElementById('confirmPassword').value = '';
+    
+  } catch (error) {
+    showMessage('Failed to change password', 'error');
+  }
+}
+
+function exportData() {
+  try {
+    const data = {
+      user: currentUser,
+      settings: {
+        theme: themeManager.getCurrentTheme(),
+        notifications: JSON.parse(localStorage.getItem('earnly_notifications') || '{}')
+      },
+      exportDate: new Date().toISOString()
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `earnly-data-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showMessage('Data exported successfully!', 'success');
+    
+  } catch (error) {
+    showMessage('Failed to export data', 'error');
+  }
+}
+
+function togglePassword(fieldId) {
+  const passwordField = document.getElementById(fieldId);
+  const eyeIcon = document.getElementById(fieldId + 'Eye');
+  
+  if (passwordField.type === 'password') {
+    passwordField.type = 'text';
+    eyeIcon.className = 'fas fa-eye-slash';
+  } else {
+    passwordField.type = 'password';
+    eyeIcon.className = 'fas fa-eye';
+  }
+}
+
+function logout() {
+  document.getElementById('logoutModal').style.display = 'block';
+}
+
+function closeLogoutModal() {
+  document.getElementById('logoutModal').style.display = 'none';
+}
+
+function confirmLogout() {
+  api.logout();
+  showMessage('Logged out successfully', 'success');
+  setTimeout(() => {
+    window.location.href = 'auth.html';
+  }, 1000);
+}
+
+function deleteAccount() {
+  document.getElementById('deleteModal').style.display = 'block';
+}
+
+function closeDeleteModal() {
+  document.getElementById('deleteModal').style.display = 'none';
+  document.getElementById('deletePassword').value = '';
+}
+
+function confirmDelete() {
+  const password = document.getElementById('deletePassword').value;
+  
+  if (!password) {
+    showMessage('Password is required to delete account', 'error');
+    return;
+  }
+  
+  // Here you would typically verify password with API
+  // For demo purposes, we'll accept any password
+  
+  if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+    if (confirm('This will permanently delete all your data. Are you absolutely sure?')) {
+      localStorage.clear();
+      showMessage('Account deleted successfully', 'success');
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 2000);
+    }
+  }
+}
+
+function showMessage(text, type = 'error') {
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px 24px;
+    border-radius: 12px;
+    color: white;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease;
+    background: ${type === 'success' ? 'var(--secondary)' : 'var(--danger)'};
+  `;
+  
+  notification.innerHTML = `
+    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+    <span>${text}</span>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    document.body.removeChild(notification);
+  }, 3000);
+}
+
+// Auto-save settings when any input changes
+document.addEventListener('change', function(e) {
+  if (e.target.type === 'checkbox' && e.target.id.includes('Notif')) {
+    saveNotificationSettings();
+  }
+});
+
+// Auto-save profile fields when they change
+document.addEventListener('input', function(e) {
+  if (e.target.id === 'username' || e.target.id === 'phone') {
+    // Debounce the save to avoid too many saves
+    clearTimeout(window.profileSaveTimeout);
+    window.profileSaveTimeout = setTimeout(() => {
+      if (document.getElementById('username').value.trim()) {
+        updateProfile();
+      }
+    }, 1000); // Save 1 second after user stops typing
+  }
+});
+
+// Avatar upload handling
+document.getElementById('avatarUpload').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const avatarPreview = document.getElementById('avatarPreview');
+      avatarPreview.style.backgroundImage = `url(${e.target.result})`;
+      avatarPreview.style.backgroundSize = 'cover';
+      avatarPreview.style.backgroundPosition = 'center';
+      avatarPreview.textContent = '';
+      showMessage('Profile photo updated!', 'success');
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+// Initialize settings when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  initSettings();
+});
+</script>
+</body>
+</html>

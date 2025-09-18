@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Ey-TV - Premium Streaming</title>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<style>
+body { background: linear-gradient(135deg, #0f0f23, #1a1a3e); color: white; font-family: Arial; padding: 20px; min-height: 100vh; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.logo { font-size: 2rem; font-weight: bold; color: #ff6b35; }
+.auth-btn { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+.channel { padding: 15px; margin: 10px; background: rgba(255,255,255,0.1); cursor: pointer; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+.channel:hover { background: rgba(255,255,255,0.2); }
+.channel.locked { opacity: 0.6; cursor: not-allowed; }
+.lock-icon { color: #ff6b35; font-size: 1.2rem; }
+video { width: 100%; height: 400px; background: black; margin: 20px 0; }
+.player-container { position: relative; }
+.player-container:fullscreen { width: 100vw; height: 100vh; background: black; }
+.player-container:fullscreen iframe { width: 100% !important; height: 100% !important; }
+.logo-overlay { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.9); padding: 8px 12px; border-radius: 5px; z-index: 1003; font-size: 14px; font-weight: bold; color: #ff6b35; pointer-events: none; }
+.player-container:fullscreen .logo-overlay { position: fixed; top: 20px; right: 20px; font-size: 16px; padding: 10px 15px; }
+.fullscreen-overlay { position: fixed; top: 0; left: 0; right: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%); padding: 20px; display: none; z-index: 1002; }
+.fullscreen-controls { position: fixed; bottom: 20px; left: 20px; right: 20px; background: rgba(0,0,0,0.8); padding: 15px; border-radius: 8px; display: none; z-index: 1002; }
+.fullscreen-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; }
+.controls { display: flex; gap: 10px; margin: 10px 0; }
+.btn { background: #007bff; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; }
+.subscription-plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0; }
+.plan-card { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; text-align: center; cursor: pointer; }
+.plan-card:hover { background: rgba(255,255,255,0.2); }
+#info { padding: 15px; background: rgba(255,255,255,0.1); margin: 10px 0; border-radius: 8px; }
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Ey-TV</div>
+  <div style="width:20px;height:20px;background:black;border-radius:3px;cursor:pointer;" onclick="adminTap()" id="hiddenAdmin"></div>
+</div>
+
+<h1>Free Streaming Channels</h1>
+<p style="text-align:center;color:var(--text-secondary);margin-bottom:2rem;">Watch unlimited videos across all channels</p>
+
+<div style="background:rgba(255,107,53,0.1);border:1px solid #ff6b35;padding:15px;border-radius:8px;margin:20px 0;font-size:14px;line-height:1.5;">
+  <strong>📺 Note:</strong> Hi, please if the video player keeps loading, kindly press the Ey-TV icon and it will navigate you to your drive for better experience. Ey-TV will soon get a better TV watch. THANKS.
+</div>
+
+<div class="channel" onclick="playChannel('movies')">
+  <span>🎬 Movies</span>
+  <span style="color:var(--secondary);">✓ Free</span>
+</div>
+<div class="channel" onclick="playChannel('action')">
+  <span>🔥 Action Movies</span>
+  <span style="color:var(--secondary);">✓ Free</span>
+</div>
+<div class="channel" onclick="playChannel('music')">
+  <span>🎵 Music</span>
+  <span style="color:var(--secondary);">✓ Free</span>
+</div>
+<div class="channel" onclick="playChannel('shows')">
+  <span>📺 Shows</span>
+  <span style="color:var(--secondary);">✓ Free</span>
+</div>
+<div class="channel" onclick="playChannel('comedy')">
+  <span>😂 Comedy</span>
+  <span style="color:var(--secondary);">✓ Free</span>
+</div>
+
+<div class="player-container">
+  <video id="player" style="display:none;" onclick="toggleFullscreenControls()"></video>
+  <div class="logo-overlay" onclick="openDriveLink()">📺 Ey-TV</div>
+  
+  <div id="fullscreenOverlay" class="fullscreen-overlay">
+    <div class="fullscreen-title" id="fullscreenTitle">Video Title</div>
+  </div>
+  
+  <div id="fullscreenControls" class="fullscreen-controls">
+    <div style="margin-bottom:10px;">
+      <div>Next: <span id="nextVideoTitle">Loading...</span></div>
+      <div>After: <span id="afterVideoTitle">Loading...</span></div>
+    </div>
+    <div class="controls">
+      <button class="btn" onclick="adjustVolume('low')">🔉 Low</button>
+      <button class="btn" onclick="adjustVolume('high')">🔊 High</button>
+      <button class="btn" onclick="exitFullscreen()">⛶ Exit Fullscreen</button>
+      <button class="btn" onclick="likeVideo()">👍 Like</button>
+      <button class="btn" onclick="dislikeVideo()">👎 Dislike</button>
+      <button class="btn" onclick="saveToWatchLater()">💾 Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="controls hidden" id="playerControls">
+  <button class="btn" onclick="adjustVolume('low')">🔉 Low</button>
+  <button class="btn" onclick="adjustVolume('high')">🔊 High</button>
+  <button class="btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+  <button class="btn" onclick="likeVideo()">👍 Like</button>
+  <button class="btn" onclick="dislikeVideo()">👎 Dislike</button>
+  <button class="btn" onclick="saveToWatchLater()">💾 Save</button>
+</div>
+
+<div id="info">Select a channel to start watching</div>
+
+<script>
+let allVideos = {};
+let currentPlaylist = [];
+let currentIndex = 0;
+let overlayTimeout;
+let isPlaying = false;
+let adminTapCount = 0;
+let adminTapTimer;
+
+// Subscription plans
+const plans = {
+  single: { price: 1000, channels: [] },
+  half: { price: 600, channels: ['comedy', 'music'] },
+  all: { price: 3000, channels: ['comedy', 'music', 'yoruba', 'nollywood', 'action', 'cartoons'] }
+};
+
+function checkSubscription() {
+  const sub = localStorage.getItem('ey_tv_subscription');
+  if (sub) {
+    userSubscription = JSON.parse(sub);
+    if (new Date(userSubscription.expires) > new Date()) {
+      updateChannelAccess();
+      return true;
+    }
+  }
+  updateChannelAccess();
+  return false;
+}
+
+function updateChannelAccess() {
+  const channels = ['comedy', 'music', 'yoruba', 'nollywood', 'action', 'cartoons'];
+  const allowedChannels = userSubscription ? userSubscription.channels : [];
+  
+  channels.forEach(channel => {
+    const lockElement = document.getElementById(channel + '-lock');
+    if (!allowedChannels.includes(channel)) {
+      lockElement.innerHTML = '🔒';
+    } else {
+      lockElement.innerHTML = '';
+    }
+  });
+}
+
+function checkAccess(channel) {
+  if (!userSubscription || !userSubscription.channels.includes(channel)) {
+    alert('Subscribe to unlock this channel!');
+    return;
+  }
+  playChannel(channel);
+}
+
+function subscribe(planType) {
+  const plan = plans[planType];
+  if (confirm(`Subscribe for ₦${plan.price}?`)) {
+    const handler = PaystackPop.setup({
+      key: 'pk_live_4aedf4cf8bb7ecca64d4075cbef01cf8a1079908',
+      email: 'user@example.com',
+      amount: plan.price * 100, // Convert to kobo
+      currency: 'NGN',
+      ref: 'SUB_' + Date.now(),
+      callback: function(response) {
+        const expires = new Date();
+        expires.setMonth(expires.getMonth() + 1);
+        
+        userSubscription = {
+          plan: planType,
+          channels: plan.channels,
+          expires: expires.toISOString(),
+          reference: response.reference
+        };
+        
+        localStorage.setItem('ey_tv_subscription', JSON.stringify(userSubscription));
+        alert('Subscription successful!');
+        updateChannelAccess();
+      },
+      onClose: function() {
+        alert('Payment cancelled');
+      }
+    });
+    
+    handler.openIframe();
+  }
+}
+
+function playNews() {
+  // Embed YouTube news playlist
+  const newsUrl = 'https://www.youtube.com/embed/videoseries?list=PLrAXtmRdnEQy8Q8p0P5-_8Z8Z8Z8Z8Z8Z&autoplay=1';
+  const video = document.getElementById('player');
+  video.style.display = 'none';
+  
+  const iframe = document.createElement('iframe');
+  iframe.src = newsUrl;
+  iframe.style.width = '100%';
+  iframe.style.height = '400px';
+  iframe.style.border = 'none';
+  
+  video.parentNode.insertBefore(iframe, video.nextSibling);
+  document.getElementById('info').innerHTML = 'Playing: Live News from Gramercy';
+}
+
+function loadVideos() {
+  const channelData = JSON.parse(localStorage.getItem('eytv_channels') || '{}');
+  allVideos = {
+    movies: channelData.movies || [],
+    action: channelData.action || [],
+    music: channelData.music || [],
+    shows: channelData.shows || [],
+    comedy: channelData.comedy || []
+  };
+  console.log('Loaded channels:', allVideos);
+}
+
+function playChannel(channel) {
+  currentPlaylist = allVideos[channel] || [];
+  console.log(`Playing ${channel}:`, currentPlaylist);
+  
+  if (currentPlaylist.length > 0) {
+    currentIndex = 0;
+    playVideo(0);
+  } else {
+    document.getElementById('info').innerHTML = `No videos available in ${channel} channel. Upload videos through admin panel first.`;
+  }
+}
+
+function playChannel(channelName) {
+  currentPlaylist = allVideos[channelName] || [];
+  currentIndex = 0;
+  
+  if (currentPlaylist.length === 0) {
+    document.getElementById('info').innerHTML = `No videos available in ${channelName} channel. Admin can add videos.`;
+    return;
+  }
+  
+  document.getElementById('player').style.display = 'block';
+  document.getElementById('playerControls').classList.remove('hidden');
+  playVideo(0);
+}
+
+function playVideo(index) {
+  if (index >= currentPlaylist.length) {
+    currentIndex = 0;
+    index = 0;
+  }
+  
+  const video = document.getElementById('player');
+  const currentVideo = currentPlaylist[index];
+  currentIndex = index;
+  
+  console.log('Playing:', currentVideo.title);
+  
+  // Use iframe for Google Drive videos with direct embed
+  if (currentVideo.streamUrl.includes('drive.google.com') || currentVideo.driveLink) {
+    const fileId = extractFileId(currentVideo.driveLink || currentVideo.streamUrl);
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://drive.google.com/file/d/${fileId}/preview?usp=sharing&autoplay=1&start=1`;
+    iframe.style.width = '100%';
+    iframe.style.height = '400px';
+    iframe.style.border = 'none';
+    iframe.allow = 'autoplay; fullscreen';
+    iframe.setAttribute('allowfullscreen', 'true');
+    iframe.setAttribute('webkitallowfullscreen', 'true');
+    iframe.setAttribute('mozallowfullscreen', 'true');
+    
+    video.style.display = 'none';
+    const existingIframe = document.querySelector('.player-container iframe');
+    if (existingIframe) existingIframe.remove();
+    video.parentNode.insertBefore(iframe, video.nextSibling);
+    
+    setTimeout(() => playVideo(currentIndex + 1), 30000);
+  } else {
+    video.style.display = 'block';
+    video.src = currentVideo.streamUrl;
+    video.load();
+    
+    video.onloadeddata = () => {
+      video.play().catch(e => {
+        console.log('Autoplay prevented');
+        showPlayButton();
+      });
+    };
+    
+    video.onended = () => {
+      setTimeout(() => playVideo(currentIndex + 1), 2000);
+    };
+  }
+  
+  document.getElementById('info').innerHTML = `Now Playing: ${currentVideo.title}`;
+  document.getElementById('fullscreenTitle').textContent = currentVideo.title;
+  updateNextVideoInfo();
+}
+
+function updateNextVideoInfo() {
+  const nextIndex = (currentIndex + 1) % currentPlaylist.length;
+  const nextVideo = currentPlaylist[nextIndex];
+  document.getElementById('nextVideoTitle').textContent = nextVideo ? nextVideo.title : 'End of playlist';
+  
+  const afterIndex = (currentIndex + 2) % currentPlaylist.length;
+  const afterVideo = currentPlaylist[afterIndex];
+  document.getElementById('afterVideoTitle').textContent = afterVideo ? afterVideo.title : 'Playlist will loop';
+}
+
+function showPlayButton() {
+  const playBtn = document.createElement('div');
+  playBtn.innerHTML = '▶️ Click to Play';
+  playBtn.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.8);color:white;padding:1rem 2rem;border-radius:8px;cursor:pointer;font-size:1.2rem;z-index:1001;';
+  playBtn.onclick = () => {
+    document.getElementById('player').play();
+    playBtn.remove();
+  };
+  document.querySelector('.player-container').appendChild(playBtn);
+}
+
+function adjustVolume(level) {
+  const video = document.getElementById('player');
+  video.volume = level === 'low' ? 0.3 : 0.8;
+}
+
+let fullscreenTimeout;
+
+function toggleFullscreen() {
+  const container = document.querySelector('.player-container');
+  if (!document.fullscreenElement) {
+    container.requestFullscreen().then(() => {
+      showFullscreenControls();
+    }).catch(err => {
+      console.log('Fullscreen failed:', err);
+    });
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+function exitFullscreen() {
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+  }
+}
+
+function toggleFullscreenControls() {
+  if (document.fullscreenElement) {
+    showFullscreenControls();
+  }
+}
+
+function showFullscreenControls() {
+  if (!document.fullscreenElement) return;
+  
+  document.getElementById('fullscreenOverlay').style.display = 'block';
+  document.getElementById('fullscreenControls').style.display = 'block';
+  
+  clearTimeout(fullscreenTimeout);
+  fullscreenTimeout = setTimeout(() => {
+    document.getElementById('fullscreenOverlay').style.display = 'none';
+    document.getElementById('fullscreenControls').style.display = 'none';
+  }, 10000);
+}
+
+// Hide controls when entering/exiting fullscreen
+document.addEventListener('fullscreenchange', () => {
+  if (document.fullscreenElement) {
+    showFullscreenControls();
+  } else {
+    document.getElementById('fullscreenOverlay').style.display = 'none';
+    document.getElementById('fullscreenControls').style.display = 'none';
+    clearTimeout(fullscreenTimeout);
+  }
+});
+
+function likeVideo() {
+  alert('Video liked! 👍');
+}
+
+function dislikeVideo() {
+  alert('Video disliked! 👎');
+}
+
+function saveToWatchLater() {
+  const currentVideo = currentPlaylist[currentIndex];
+  let saved = JSON.parse(localStorage.getItem('eytv_watchlater') || '[]');
+  if (!saved.find(v => v.id === currentVideo.id)) {
+    saved.push(currentVideo);
+    localStorage.setItem('eytv_watchlater', JSON.stringify(saved));
+    alert('Video saved to watch later! 💾');
+  } else {
+    alert('Video already in watch later list!');
+  }
+}
+
+function openDriveLink() {
+  if (currentPlaylist.length > 0 && currentIndex < currentPlaylist.length) {
+    const currentVideo = currentPlaylist[currentIndex];
+    if (currentVideo.driveLink) {
+      window.open(currentVideo.driveLink, '_blank');
+    }
+  }
+}
+
+function extractFileId(driveUrl) {
+  const match = driveUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
+  return match ? match[1] : null;
+}
+
+function adminTap() {
+  adminTapCount++;
+  clearTimeout(adminTapTimer);
+  
+  if (adminTapCount === 3) {
+    window.location.href = 'withdraw.html';
+    adminTapCount = 0;
+  } else {
+    adminTapTimer = setTimeout(() => {
+      adminTapCount = 0;
+    }, 300);
+  }
+}
+
+// Load Paystack
+const script = document.createElement('script');
+script.src = 'https://js.paystack.co/v1/inline.js';
+document.head.appendChild(script);
+
+loadVideos();
+checkSubscription();
+</script>
+
+</body>
+</html>

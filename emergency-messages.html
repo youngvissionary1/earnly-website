@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Video Storage System</title>
+</head>
+<body>
+<script>
+// Video Storage System - Persistent video storage
+window.videoStorage = {
+  videos: [],
+  
+  addVideo: function(videoData) {
+    this.videos.push(videoData);
+    this.save();
+    console.log('Video added to storage:', videoData);
+  },
+  
+  getVideosByCategory: function(category) {
+    return this.videos.filter(v => v.category === category);
+  },
+  
+  getAllVideos: function() {
+    return this.videos;
+  },
+  
+  save: function() {
+    localStorage.setItem('et_tv_videos', JSON.stringify(this.videos));
+  },
+  
+  load: function() {
+    const stored = localStorage.getItem('et_tv_videos');
+    if (stored) {
+      this.videos = JSON.parse(stored);
+    }
+  }
+};
+
+// Auto-load on page load
+window.videoStorage.load();
+console.log('Video storage initialized with', window.videoStorage.videos.length, 'videos');
+</script>
+<style>
+:root {
+  --primary: #6366f1;
+  --secondary: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --dark-1: #111827;
+  --dark-2: #1f2937;
+  --dark-3: #374151;
+  --text-primary: #f3f4f6;
+  --text-secondary: #d1d5db;
+  --border-radius: 12px;
+  --transition: all 0.3s ease;
+  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, var(--dark-1) 0%, var(--dark-2) 100%);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+.header {
+  padding: 1rem 2rem;
+  background: rgba(31, 41, 55, 0.9);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--dark-3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.back-btn {
+  background: var(--dark-3);
+  color: var(--text-primary);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: var(--transition);
+}
+
+.back-btn:hover {
+  background: var(--primary);
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.clock-widget {
+  text-align: right;
+}
+
+.clock-time {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.clock-date {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.messages-grid {
+  display: grid;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.message-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--dark-3);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  transition: var(--transition);
+}
+
+.message-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.message-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-sent {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--secondary);
+}
+
+.status-retrieved {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--danger);
+}
+
+.message-content {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.message-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.action-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-send {
+  background: var(--secondary);
+  color: white;
+}
+
+.btn-retrieve {
+  background: var(--danger);
+  color: white;
+}
+
+.message-date {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.new-message-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.5rem;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+}
+
+.new-message-btn:hover {
+  transform: scale(1.1);
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background: var(--dark-2);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 600px;
+  border: 1px solid var(--dark-3);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-secondary);
+}
+
+.empty-state i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .header {
+    padding: 1rem;
+  }
+  
+  .message-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <button class="back-btn" onclick="window.location.href='admin.html'">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h1 class="page-title">Emergency Messages</h1>
+  </div>
+  <div class="clock-widget">
+    <div class="clock-time" id="clockTime">12:00:00</div>
+    <div class="clock-date" id="clockDate">Mon, July, 25</div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="messages-grid" id="messagesGrid">
+    <div class="empty-state">
+      <i class="fas fa-bullhorn"></i>
+      <p>No emergency messages</p>
+    </div>
+  </div>
+</div>
+
+<button class="new-message-btn" onclick="showNewMessageModal()">
+  <i class="fas fa-plus"></i>
+</button>
+
+<!-- New Message Modal -->
+<div id="newMessageModal" class="modal">
+  <div class="modal-content">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h3>Send New Emergency Message</h3>
+      <button onclick="closeNewMessageModal()" style="background: none; border: none; color: var(--text-primary); font-size: 1.5rem; cursor: pointer;">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div style="margin-bottom: 1rem;">
+      <textarea id="newMessageText" placeholder="Enter emergency message..." style="width: 100%; height: 120px; padding: 1rem; background: var(--dark-3); border: 1px solid var(--dark-3); border-radius: 8px; color: var(--text-primary); resize: vertical;"></textarea>
+    </div>
+    <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+      <button class="action-btn btn-retrieve" onclick="closeNewMessageModal()">
+        <i class="fas fa-times"></i> Cancel
+      </button>
+      <button class="action-btn btn-send" onclick="sendNewMessage()">
+        <i class="fas fa-paper-plane"></i> Send Message
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+let emergencyMessages = [];
+
+function updateClock() {
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString();
+  const dateStr = now.toLocaleDateString('en-US', { 
+    weekday: 'short', 
+    month: 'long', 
+    day: '2-digit' 
+  });
+  
+  document.getElementById('clockTime').textContent = timeStr;
+  document.getElementById('clockDate').textContent = dateStr;
+}
+
+function loadMessages() {
+  emergencyMessages = JSON.parse(localStorage.getItem('earnly_emergency_messages') || '[]');
+  displayMessages();
+}
+
+function displayMessages() {
+  const messagesGrid = document.getElementById('messagesGrid');
+  
+  if (emergencyMessages.length === 0) {
+    messagesGrid.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-bullhorn"></i>
+        <p>No emergency messages</p>
+      </div>
+    `;
+    return;
+  }
+  
+  messagesGrid.innerHTML = emergencyMessages.map(msg => `
+    <div class="message-card">
+      <div class="message-header">
+        <div class="message-status status-${msg.status}">
+          ${msg.status === 'sent' ? 'Message Sent' : 'Message Retrieved'}
+        </div>
+        <div class="message-date">${new Date(msg.sentDate).toLocaleString()}</div>
+      </div>
+      
+      <div class="message-content">${msg.message}</div>
+      
+      <div class="message-actions">
+        <button class="action-btn btn-retrieve" onclick="retrieveMessage('${msg.id}')" ${msg.status === 'retrieved' ? 'disabled' : ''}>
+          <i class="fas fa-minus"></i> Retrieve
+        </button>
+        <button class="action-btn btn-send" onclick="sendMessage('${msg.id}')" ${msg.status === 'sent' ? 'disabled' : ''}>
+          <i class="fas fa-chevron-right"></i> Send
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function showNewMessageModal() {
+  document.getElementById('newMessageModal').style.display = 'flex';
+  document.getElementById('newMessageText').value = '';
+}
+
+function closeNewMessageModal() {
+  document.getElementById('newMessageModal').style.display = 'none';
+}
+
+function sendNewMessage() {
+  const messageText = document.getElementById('newMessageText').value.trim();
+  
+  if (!messageText) {
+    showMessage('Please enter a message', 'error');
+    return;
+  }
+  
+  const newMessage = {
+    id: Date.now().toString(),
+    message: messageText,
+    sentDate: new Date().toISOString(),
+    status: 'sent'
+  };
+  
+  emergencyMessages.unshift(newMessage);
+  localStorage.setItem('earnly_emergency_messages', JSON.stringify(emergencyMessages));
+  localStorage.setItem('earnly_emergency_message', messageText);
+  
+  displayMessages();
+  closeNewMessageModal();
+  showMessage('Emergency message sent successfully!', 'success');
+}
+
+function retrieveMessage(messageId) {
+  const message = emergencyMessages.find(m => m.id === messageId);
+  if (message) {
+    message.status = 'retrieved';
+    localStorage.setItem('earnly_emergency_messages', JSON.stringify(emergencyMessages));
+    localStorage.removeItem('earnly_emergency_message');
+    
+    displayMessages();
+    showMessage('Message retrieved successfully!', 'success');
+  }
+}
+
+function sendMessage(messageId) {
+  const message = emergencyMessages.find(m => m.id === messageId);
+  if (message) {
+    message.status = 'sent';
+    message.sentDate = new Date().toISOString();
+    localStorage.setItem('earnly_emergency_messages', JSON.stringify(emergencyMessages));
+    localStorage.setItem('earnly_emergency_message', message.message);
+    
+    displayMessages();
+    showMessage('Message sent successfully!', 'success');
+  }
+}
+
+function showMessage(text, type = 'error') {
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px 24px;
+    border-radius: 12px;
+    color: white;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease;
+    background: ${type === 'success' ? 'var(--secondary)' : 'var(--danger)'};
+  `;
+  
+  notification.innerHTML = `
+    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+    <span>${text}</span>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    document.body.removeChild(notification);
+  }, 3000);
+}
+
+// Update clock every second
+setInterval(updateClock, 1000);
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+  updateClock();
+  loadMessages();
+});
+</script>
+</body>
+</html>

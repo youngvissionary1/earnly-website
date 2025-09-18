@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - Earnly</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root {
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --secondary: #10b981;
+  --accent: #f59e0b;
+  --danger: #ef4444;
+  --dark-1: #111827;
+  --dark-2: #1f2937;
+  --dark-3: #374151;
+  --text-primary: #f3f4f6;
+  --text-secondary: #d1d5db;
+  --border-radius: 12px;
+  --transition: all 0.3s ease;
+  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, var(--dark-1) 0%, var(--dark-2) 100%);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+.header {
+  padding: 1rem 2rem;
+  background: rgba(31, 41, 55, 0.9);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--dark-3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.clock-widget {
+  text-align: right;
+}
+
+.clock-time {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.clock-date {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.withdrawal-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid;
+  opacity: 0.7;
+}
+
+.status-closed {
+  color: #ef4444;
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.status-soon {
+  color: #f59e0b;
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.status-open {
+  color: #10b981;
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  animation: blink 2s infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 0.7; }
+  25%, 75% { opacity: 1; }
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.emergency-message {
+  display: none;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  padding: 1rem 2rem;
+  margin-bottom: 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  animation: slideDown 0.5s ease;
+  width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  position: relative;
+}
+
+.emergency-message.show {
+  display: block;
+}
+
+.emergency-message .close-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.emergency-message .close-btn:hover {
+  opacity: 1;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.welcome-message {
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: var(--border-radius);
+  padding: 1rem 2rem;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  color: var(--primary);
+  overflow: hidden;
+  white-space: nowrap;
+  width: auto;
+}
+
+.welcome-message.emergency {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: var(--secondary);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+  animation: emergencyBlink 2s infinite;
+}
+
+@keyframes emergencyBlink {
+  0%, 50% { 
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+    border-color: rgba(16, 185, 129, 0.3);
+  }
+  25%, 75% { 
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.6);
+    border-color: rgba(16, 185, 129, 0.6);
+  }
+}
+
+.balance-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.balance-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--dark-3);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  text-align: center;
+  position: relative;
+}
+
+.total-balance {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(16, 185, 129, 0.1));
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.balance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.balance-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.toggle-visibility {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.toggle-visibility:hover {
+  color: var(--primary);
+}
+
+.balance-amount {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--secondary);
+  margin-bottom: 0.5rem;
+}
+
+.total-balance .balance-amount {
+  font-size: 2.5rem;
+}
+
+.naira-conversion {
+  position: absolute;
+  bottom: 10px;
+  right: 15px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.25rem 0.5rem;
+  border-radius: 15px;
+}
+
+.referral-section {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.referral-btn {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow);
+}
+
+.referral-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 25px -5px rgba(99, 102, 241, 0.4);
+}
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.action-btn {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--dark-3);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: var(--transition);
+  text-align: center;
+  cursor: pointer;
+}
+
+.action-btn:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow);
+  border-color: var(--primary);
+}
+
+.action-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--primary);
+}
+
+.video-btn-large {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow);
+}
+
+.video-btn-large:hover {
+  transform: scale(1.1);
+  box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+}
+
+.top-earners-section {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--dark-3);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.top-earners-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.earner-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--dark-3);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  transition: var(--transition);
+}
+
+.earner-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.earner-rank {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--warning);
+  margin-bottom: 0.5rem;
+}
+
+.earner-name {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.earner-amount {
+  color: var(--secondary);
+  font-weight: 600;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.notification-btn {
+  position: relative;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: var(--transition);
+  padding: 0.5rem;
+}
+
+.notification-btn:hover {
+  color: var(--primary);
+}
+
+.notification-btn.has-notifications {
+  color: var(--warning);
+}
+
+.notification-dot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  background: var(--danger);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.notification-btn.checked {
+  color: var(--secondary);
+}
+
+.notification-btn.checked .notification-dot {
+  background: white;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.admin-btn-hidden {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.1);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: var(--transition);
+  padding: 0;
+  font-size: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-btn-hidden:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.15);
+}
+
+.admin-btn-hidden.clicked {
+  background: rgba(99, 102, 241, 0.1);
+  color: rgba(99, 102, 241, 0.3);
+  transform: scale(1.1);
+}
+
+.admin-btn-hidden.activated {
+  background: var(--primary);
+  color: white;
+  animation: pulse 0.3s ease;
+}
+
+.admin-modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+.admin-modal-content {
+  background: var(--dark-2);
+  margin: 15% auto;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  border: 1px solid var(--dark-3);
+  box-shadow: var(--shadow);
+}
+
+.success-mark {
+  display: none;
+  font-size: 4rem;
+  color: var(--secondary);
+  margin: 2rem 0;
+  animation: successPop 0.6s ease-out;
+}
+
+@keyframes successPop {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.passkey-input {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.5rem;
+  text-align: center;
+  letter-spacing: 0.5rem;
+  background: var(--dark-3);
+  border: 2px solid var(--dark-3);
+  border-radius: 8px;
+  color: var(--text-primary);
+  margin: 1rem 0;
+  transition: var(--transition);
+}
+
+.passkey-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+}
+
+.passkey-input.success {
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+}
+
+.door-animation {
+  display: none;
+  position: fixed;
+  z-index: 3000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.animation-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.door {
+  width: 200px;
+  height: 300px;
+  background: linear-gradient(145deg, #8B4513, #A0522D);
+  border-radius: 15px;
+  position: relative;
+  border: 4px solid #654321;
+  transform-origin: left center;
+  transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.door.opening {
+  transform: perspective(800px) rotateY(-110deg);
+}
+
+.door-handle {
+  width: 15px;
+  height: 15px;
+  background: radial-gradient(circle, #FFD700, #FFA500);
+  border-radius: 50%;
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.door.opening .door-handle {
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.door-panels {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+  border: 2px solid #654321;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #A0522D, #8B4513);
+}
+
+.door-panels::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  right: 5px;
+  height: 2px;
+  background: #654321;
+  transform: translateY(-50%);
+}
+
+.door-panels::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 5px;
+  bottom: 5px;
+  width: 2px;
+  background: #654321;
+  transform: translateX(-50%);
+}
+
+.hand-with-key {
+  position: absolute;
+  right: -120px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2.5rem;
+  opacity: 0;
+  z-index: 10;
+}
+
+.hand-with-key.animate {
+  animation: unlockSequence 4s ease-in-out;
+}
+
+@keyframes unlockSequence {
+  0% { 
+    opacity: 0; 
+    right: -120px; 
+    transform: translateY(-50%) rotate(0deg);
+  }
+  15% { 
+    opacity: 1; 
+    right: -60px; 
+  }
+  30% { 
+    right: -30px; 
+    transform: translateY(-50%) rotate(-15deg);
+  }
+  45% { 
+    right: -25px; 
+    transform: translateY(-50%) rotate(15deg);
+  }
+  60% { 
+    right: -25px; 
+    transform: translateY(-50%) rotate(-10deg);
+  }
+  75% { 
+    right: -30px; 
+    transform: translateY(-50%) rotate(0deg);
+  }
+  90% { 
+    right: -60px; 
+  }
+  100% { 
+    opacity: 0; 
+    right: -120px; 
+    transform: translateY(-50%) rotate(0deg);
+  }
+}
+
+.door-glow {
+  position: absolute;
+  width: 220px;
+  height: 320px;
+  background: radial-gradient(ellipse, rgba(16, 185, 129, 0.3), transparent);
+  border-radius: 15px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.door-glow.active {
+  opacity: 1;
+}
+
+.admin-entrance {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--dark-1), var(--dark-2));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateX(0);
+  opacity: 0;
+  transition: all 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.admin-entrance.entering {
+  left: 0;
+  opacity: 1;
+}
+
+.admin-welcome {
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.admin-welcome h2 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.admin-welcome p {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--dark-3);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+}
+
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.stat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  background: rgba(99, 102, 241, 0.2);
+  color: var(--primary);
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .header-actions {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .container {
+    padding: 1rem;
+  }
+  
+  .balance-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .balance-card {
+    padding: 1rem;
+  }
+  
+  .balance-amount {
+    font-size: 1.5rem;
+  }
+  
+  .total-balance .balance-amount {
+    font-size: 2rem;
+  }
+  
+  .quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .welcome-message {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <img src="images/earnly-logo-dark.svg" alt="Earnly Logo" style="width: 40px; height: 40px; margin-right: 10px; vertical-align: middle;">
+    <div>
+      <div>Earnly</div>
+      <div style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 400;" id="userGreeting">Hello, User</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="video-btn-header" onclick="window.location.href='Et-TV.html'" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem; margin-right: 1rem;">
+      <i class="fas fa-play"></i> EY.TV
+    </button>
+    <button class="notification-btn" onclick="goToNotifications()" id="notificationBtn">
+      <i class="fas fa-bell"></i>
+      <div class="notification-dot" id="notificationDot" style="display: none;"></div>
+    </button>
+    <button class="admin-btn-hidden" id="adminBtn" onclick="handleAdminClick()">
+      <i class="fas fa-circle"></i>
+    </button>
+    <div class="clock-widget">
+      <div class="clock-time" id="clockTime">12:00:00</div>
+      <div class="clock-date" id="clockDate">Mon, July, 25</div>
+      <div class="withdrawal-status" id="withdrawalStatus">
+        <i class="fas fa-times-circle"></i> Withdrawal Closed
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="emergency-message" id="emergencyMessage"></div>
+
+  <div class="welcome-message" id="welcomeMessage"></div>
+
+  <div class="balance-grid">
+    <div class="balance-card total-balance">
+      <div class="balance-header">
+        <h3>Total Balance</h3>
+        <div class="balance-controls">
+          <button class="toggle-visibility" onclick="toggleBalanceVisibility()" id="visibilityToggle">
+            <i class="fas fa-eye" id="eyeIcon"></i>
+          </button>
+        </div>
+      </div>
+      <div class="balance-amount" id="totalBalance">$0.000</div>
+      <div class="naira-conversion" id="nairaConversion">₦0.00</div>
+    </div>
+    
+    <div class="balance-card">
+      <h3>Task Balance</h3>
+      <div class="balance-amount" id="taskBalance">$0.000</div>
+    </div>
+    
+    <div class="balance-card">
+      <h3>Daily Bonus</h3>
+      <div class="balance-amount" id="dailyBonusBalance">$0.000</div>
+    </div>
+    
+    <div class="balance-card">
+      <h3>Referral Balance</h3>
+      <div class="balance-amount" id="referralBalance">$0.000</div>
+    </div>
+  </div>
+
+  <div class="referral-section">
+    <button class="referral-btn" onclick="showReferralModal()">
+      <i class="fas fa-users"></i> Referral Link
+    </button>
+  </div>
+
+  <div class="quick-actions">
+    <a href="tasks.html" class="action-btn">
+      <div class="action-icon"><i class="fas fa-tasks"></i></div>
+      <h3>Complete Tasks</h3>
+      <p>Earn money by completing simple tasks</p>
+    </a>
+    
+    <div class="action-btn" onclick="claimDailyBonus()">
+      <div class="action-icon"><i class="fas fa-gift"></i></div>
+      <h3>Daily Bonus</h3>
+      <p>Claim your $0.003 daily reward</p>
+    </div>
+    
+    <a href="airtime.html" class="action-btn">
+      <div class="action-icon"><i class="fas fa-phone-alt"></i></div>
+      <h3>Buy Airtime</h3>
+      <p>Purchase mobile airtime</p>
+    </a>
+    
+    <a href="data.html" class="action-btn">
+      <div class="action-icon"><i class="fas fa-database"></i></div>
+      <h3>Buy Data</h3>
+      <p>Purchase data bundles</p>
+    </a>
+    
+    <div class="action-btn" onclick="handleWithdraw()" id="withdrawBtn">
+      <div class="action-icon"><i class="fas fa-credit-card"></i></div>
+      <h3>Withdraw</h3>
+      <p>Cash out your earnings</p>
+    </div>
+    
+    <a href="settings.html" class="action-btn">
+      <div class="action-icon"><i class="fas fa-cog"></i></div>
+      <h3>Settings</h3>
+      <p>Manage your account</p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+      </div>
+      <div class="stat-value" id="dailyTasks">0</div>
+      <div class="stat-label">Tasks Completed Today</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-icon"><i class="fas fa-fire"></i></div>
+      </div>
+      <div class="stat-value" id="streak">0</div>
+      <div class="stat-label">Day Streak</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-icon"><i class="fas fa-users"></i></div>
+      </div>
+      <div class="stat-value" id="referrals">0</div>
+      <div class="stat-label">Referrals</div>
+    </div>
+  </div>
+
+  <div class="top-earners-section">
+    <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+      <i class="fas fa-trophy" style="color: var(--warning);"></i> Top 10 Earners
+    </h3>
+    <div class="top-earners-grid" id="topEarnersGrid">
+      <div class="loading">
+        <i class="fas fa-spinner"></i>
+        <p>Loading top earners...</p>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+<button class="video-btn" onclick="window.location.href='Et-TV.html'">
+  <i class="fas fa-play"></i>
+</button>
+
+
+
+
+
+
+
+<script src="js/api.js"></script>
+<script>
+let currentUser = null;
+let balancesVisible = true;
+let typingInterval;
+const NAIRA_RATE = 1650; // 1 USD = 1650 NGN
+
+async function initDashboard() {
+  try {
+    if (!api.isAuthenticated()) {
+      window.location.href = 'auth.html';
+      return;
+    }
+
+    const profileResponse = await api.getProfile();
+    currentUser = profileResponse.user;
+    
+    // Admin button is now always visible but requires triple click
+    
+    const balanceResponse = await api.getBalance();
+    updateBalances(balanceResponse.balances);
+    
+    updateClock();
+    checkEmergencyMessage();
+    loadStats();
+    loadTopEarners();
+    startWelcomeAnimation();
+    checkNotifications();
+    
+  } catch (error) {
+    console.error('Dashboard initialization failed:', error);
+  }
+}
+
+let adminClickCount = 0;
+let adminClickTimer = null;
+let adminSequenceTimer = null;
+
+function handleAdminClick() {
+  adminClickCount++;
+  const adminBtn = document.getElementById('adminBtn');
+  
+  // Clear existing timers
+  if (adminClickTimer) {
+    clearTimeout(adminClickTimer);
+  }
+  if (adminSequenceTimer) {
+    clearTimeout(adminSequenceTimer);
+  }
+  
+  // Add visual feedback
+  adminBtn.classList.add('clicked');
+  setTimeout(() => adminBtn.classList.remove('clicked'), 200);
+  
+  if (adminClickCount === 3) {
+    // First sequence: 3 fast taps completed
+    adminSequenceTimer = setTimeout(() => {
+      // Wait 3-4 seconds, then expect 2 more taps
+      adminClickCount = 0;
+      adminClickTimer = setTimeout(() => {
+        adminClickCount = 0; // Reset if no activity
+      }, 2000);
+    }, 3500); // 3.5 second wait
+  } else if (adminClickCount === 5) {
+    // Second sequence: 2 more taps completed (total 5)
+    clearTimeout(adminSequenceTimer);
+    adminSequenceTimer = setTimeout(() => {
+      // Wait 2 seconds, then expect 1 more tap
+      adminClickCount = 5; // Keep count at 5
+      adminClickTimer = setTimeout(() => {
+        adminClickCount = 0; // Reset if no final tap
+      }, 2000);
+    }, 2000);
+  } else if (adminClickCount === 6) {
+    // Final tap - activate admin access
+    clearTimeout(adminSequenceTimer);
+    clearTimeout(adminClickTimer);
+    adminBtn.classList.add('activated');
+    setTimeout(() => {
+      window.location.href = 'admin-access.html';
+    }, 300);
+    adminClickCount = 0;
+  } else if (adminClickCount > 6) {
+    // Reset if too many clicks
+    adminClickCount = 0;
+  }
+  
+  // Reset counter after 1 second if sequence not completed
+  if (adminClickCount < 3 || (adminClickCount > 3 && adminClickCount < 5)) {
+    adminClickTimer = setTimeout(() => {
+      adminClickCount = 0;
+    }, 1000);
+  }
+}
+
+function updateBalances(balances) {
+  const total = balances.task + balances.dailyBonus + balances.referral;
+  
+  document.getElementById('totalBalance').textContent = balancesVisible ? `$${total.toFixed(3)}` : '$***.**';
+  document.getElementById('taskBalance').textContent = balancesVisible ? `$${balances.task.toFixed(3)}` : '$***.**';
+  document.getElementById('dailyBonusBalance').textContent = balancesVisible ? `$${balances.dailyBonus.toFixed(3)}` : '$***.**';
+  document.getElementById('referralBalance').textContent = balancesVisible ? `$${balances.referral.toFixed(3)}` : '$***.**';
+  
+  // Update Naira conversion
+  const nairaAmount = total * NAIRA_RATE;
+  document.getElementById('nairaConversion').textContent = balancesVisible ? `₦${nairaAmount.toLocaleString()}` : '₦***,***';
+}
+
+function toggleBalanceVisibility() {
+  balancesVisible = !balancesVisible;
+  const eyeIcon = document.getElementById('eyeIcon');
+  eyeIcon.className = balancesVisible ? 'fas fa-eye' : 'fas fa-eye-slash';
+  
+  // Re-fetch and update balances
+  api.getBalance().then(response => {
+    updateBalances(response.balances);
+  });
+}
+
+function startWelcomeAnimation() {
+  const welcomeEl = document.getElementById('welcomeMessage');
+  const userGreeting = document.getElementById('userGreeting');
+  const message = `Hi, welcome ${currentUser.username}!`;
+  
+  // Update header greeting
+  userGreeting.textContent = `Hello, ${currentUser.username}`;
+  
+  let index = 0;
+  
+  function typeMessage() {
+    if (index < message.length) {
+      welcomeEl.textContent = message.substring(0, index + 1);
+      index++;
+      setTimeout(typeMessage, 100);
+    } else {
+      setTimeout(() => {
+        welcomeEl.textContent = '';
+        index = 0;
+        setTimeout(typeMessage, 1000);
+      }, 4500);
+    }
+  }
+  
+  typeMessage();
+}
+
+function checkNotifications() {
+  const notifications = JSON.parse(localStorage.getItem('earnly_notifications') || '[]');
+  const unreadCount = notifications.filter(n => !n.read).length;
+  
+  const notificationBtn = document.getElementById('notificationBtn');
+  const notificationDot = document.getElementById('notificationDot');
+  
+  if (unreadCount > 0) {
+    notificationBtn.classList.add('has-notifications');
+    notificationDot.style.display = 'block';
+  } else {
+    notificationBtn.classList.remove('has-notifications');
+    notificationBtn.classList.add('checked');
+    notificationDot.style.display = 'none';
+  }
+}
+
+function goToNotifications() {
+  window.location.href = 'notifications.html';
+}
+
+function updateClock() {
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString();
+  const dateStr = now.toLocaleDateString('en-US', { 
+    weekday: 'short', 
+    month: 'long', 
+    day: '2-digit' 
+  });
+  
+  document.getElementById('clockTime').textContent = timeStr;
+  document.getElementById('clockDate').textContent = dateStr;
+  
+  updateWithdrawalStatus(now);
+}
+
+function updateWithdrawalStatus(now) {
+  const day = now.getDay(); // 0=Sunday, 1=Monday, etc.
+  const hour = now.getHours();
+  const statusEl = document.getElementById('withdrawalStatus');
+  
+  if (day >= 1 && day <= 4) { // Monday to Thursday
+    statusEl.innerHTML = '<i class="fas fa-times-circle"></i> Withdrawal Closed';
+    statusEl.className = 'withdrawal-status status-closed';
+  } else if (day === 4 && hour >= 17) { // Thursday 5pm onwards
+    statusEl.innerHTML = '<i class="fas fa-clock"></i> Withdrawals Open Soon';
+    statusEl.className = 'withdrawal-status status-soon';
+  } else if (day === 5 || day === 6 || (day === 0 && hour < 24)) { // Friday to Sunday
+    statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Withdrawals Open';
+    statusEl.className = 'withdrawal-status status-open';
+  }
+}
+
+function checkEmergencyMessage() {
+  const message = localStorage.getItem('earnly_emergency_message');
+  const welcomeEl = document.getElementById('welcomeMessage');
+  
+  if (message) {
+    // Show emergency message in welcome line with green shadow and blinking
+    welcomeEl.textContent = message;
+    welcomeEl.classList.add('emergency');
+  } else {
+    // Show normal welcome message
+    welcomeEl.classList.remove('emergency');
+  }
+}
+
+async function claimDailyBonus() {
+  try {
+    // Check if already claimed today
+    const lastClaim = localStorage.getItem('earnly_last_daily_claim');
+    const today = new Date().toDateString();
+    
+    if (lastClaim === today) {
+      showMessage('Daily bonus already claimed today', 'error');
+      return;
+    }
+    
+    // Add $0.003 to balance
+    const balance = JSON.parse(localStorage.getItem('earnly_balance') || '{"task":0,"dailyBonus":0,"referral":0}');
+    balance.dailyBonus = (balance.dailyBonus || 0) + 0.003;
+    localStorage.setItem('earnly_balance', JSON.stringify(balance));
+    localStorage.setItem('earnly_last_daily_claim', today);
+    
+    showMessage('Daily bonus claimed! +$0.003', 'success');
+    
+    // Update balance display
+    const balanceResponse = await api.getBalance();
+    updateBalances(balanceResponse.balances);
+    
+    // Disable button for today
+    const dailyBonusBtn = document.querySelector('.action-btn[onclick="claimDailyBonus()"]');
+    if (dailyBonusBtn) {
+      dailyBonusBtn.style.opacity = '0.5';
+      dailyBonusBtn.style.pointerEvents = 'none';
+      dailyBonusBtn.innerHTML = '<div class="action-icon"><i class="fas fa-check"></i></div><h3>Claimed Today</h3><p>Come back tomorrow</p>';
+    }
+    
+  } catch (error) {
+    showMessage(error.message, 'error');
+  }
+}
+
+function showReferralModal() {
+  const userId = currentUser.id;
+  const referralLink = `${window.location.origin}?ref=${userId}`;
+  
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+  `;
+  
+  modal.innerHTML = `
+    <div style="background: var(--dark-2); padding: 2rem; border-radius: 12px; width: 90%; max-width: 500px; text-align: center;">
+      <h3 style="margin-bottom: 1rem;"><i class="fas fa-users"></i> Your Referral Link</h3>
+      <p style="color: var(--text-secondary); margin-bottom: 1rem;">Share this link and earn $0.03 for each signup!</p>
+      <div style="background: var(--dark-3); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; word-break: break-all;">
+        ${referralLink}
+      </div>
+      <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 1rem;">
+        <button onclick="copyReferralLink('${referralLink}')" style="background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">
+          <i class="fas fa-copy"></i> Copy Link
+        </button>
+        <button onclick="shareWhatsApp('${referralLink}')" style="background: #25D366; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">
+          <i class="fab fa-whatsapp"></i> WhatsApp
+        </button>
+        <button onclick="shareTelegram('${referralLink}')" style="background: #0088cc; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">
+          <i class="fab fa-telegram"></i> Telegram
+        </button>
+      </div>
+      <button onclick="closeReferralModal()" style="background: var(--dark-3); color: var(--text-primary); border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">
+        Close
+      </button>
+    </div>
+  `;
+  
+  modal.onclick = (e) => {
+    if (e.target === modal) closeReferralModal();
+  };
+  
+  document.body.appendChild(modal);
+  modal.id = 'referralModal';
+}
+
+function copyReferralLink(link) {
+  navigator.clipboard.writeText(link).then(() => {
+    showMessage('Referral link copied!', 'success');
+  });
+}
+
+function shareWhatsApp(link) {
+  const message = `Join Earnly and start earning money! Use my referral link: ${link}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+}
+
+function shareTelegram(link) {
+  const message = `Join Earnly and start earning money! Use my referral link: ${link}`;
+  window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(message)}`, '_blank');
+}
+
+function closeReferralModal() {
+  const modal = document.getElementById('referralModal');
+  if (modal) {
+    document.body.removeChild(modal);
+  }
+}
+
+function handleWithdraw() {
+  api.getBalance().then(response => {
+    const totalBalance = response.balances.task + response.balances.dailyBonus + response.balances.referral;
+    if (totalBalance < 0.010) {
+      showMessage('Minimum withdrawal amount is $0.010', 'error');
+      return;
+    }
+    showWithdrawalModal();
+  });
+}
+
+function showWithdrawalModal() {
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, var(--dark-1) 0%, var(--dark-2) 100%);
+    z-index: 2000;
+    overflow-y: auto;
+    padding: 2rem;
+  `;
+  
+  modal.innerHTML = `
+    <div style="max-width: 600px; margin: 0 auto; position: relative;">
+      <button onclick="closeWithdrawalModal()" style="position: absolute; top: -10px; right: -10px; width: 40px; height: 40px; border-radius: 50%; background: var(--danger); color: white; border: none; cursor: pointer; font-size: 1.2rem; z-index: 2001;">
+        <i class="fas fa-times"></i>
+      </button>
+      
+      <div style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid var(--dark-3); border-radius: 16px; padding: 2rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);">
+        <div style="text-align: center; margin-bottom: 2rem;">
+          <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">💰 Withdraw Funds</h1>
+          <p style="color: var(--text-secondary);">Instant payout to your Nigerian bank account</p>
+        </div>
+        
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--secondary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; text-align: center;">
+          <div style="color: var(--text-secondary); margin-bottom: 0.5rem;">Available Balance</div>
+          <div style="font-size: 2rem; font-weight: 700; color: var(--secondary); margin-bottom: 0.5rem;" id="modalBalance">$0.000</div>
+          <div style="color: var(--text-secondary); font-size: 1.1rem;" id="modalBalanceNaira">₦0.00</div>
+        </div>
+        
+        <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid var(--warning); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
+          <h4 style="color: var(--warning); margin-bottom: 0.5rem;"><i class="fas fa-info-circle"></i> Withdrawal Info</h4>
+          <ul style="list-style: none; padding: 0; margin: 0; color: var(--text-secondary);">
+            <li style="margin-bottom: 0.25rem;">• Minimum withdrawal: $0.010 (₦15)</li>
+            <li style="margin-bottom: 0.25rem;">• Instant payout via Paystack</li>
+            <li style="margin-bottom: 0.25rem;">• Processing fee: 1.5% + ₦100</li>
+          </ul>
+        </div>
+        
+        <div style="margin-bottom: 1.5rem;">
+          <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-weight: 500;">Withdrawal Amount (USD)</label>
+          <div style="position: relative;">
+            <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-weight: 600;">$</span>
+            <input type="number" id="withdrawAmount" placeholder="0.000" step="0.001" min="0.010" style="width: 100%; padding: 0.75rem 0.75rem 0.75rem 2rem; background: var(--dark-3); border: 1px solid var(--dark-3); border-radius: 12px; color: white; font-size: 1rem;">
+          </div>
+          <div style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;" id="nairaConv">≈ ₦0.00</div>
+        </div>
+        
+        <div style="margin-bottom: 1.5rem;">
+          <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-weight: 500;">Select Bank</label>
+          <select id="bankSelect" style="width: 100%; padding: 0.75rem; background: var(--dark-3); border: 1px solid var(--dark-3); border-radius: 12px; color: white; font-size: 1rem;">
+            <option value="">Select your bank</option>
+            <option value="058">Guaranty Trust Bank (GTBank)</option>
+            <option value="011">First Bank of Nigeria</option>
+            <option value="044">Access Bank</option>
+            <option value="033">United Bank For Africa (UBA)</option>
+            <option value="057">Zenith Bank</option>
+            <option value="070">Fidelity Bank</option>
+            <option value="214">First City Monument Bank (FCMB)</option>
+            <option value="232">Sterling Bank</option>
+            <option value="032">Union Bank</option>
+            <option value="221">Stanbic IBTC Bank</option>
+          </select>
+        </div>
+        
+        <div style="margin-bottom: 1.5rem;">
+          <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-weight: 500;">Account Number</label>
+          <input type="text" id="accountNum" placeholder="Enter 10-digit account number" maxlength="10" style="width: 100%; padding: 0.75rem; background: var(--dark-3); border: 1px solid var(--dark-3); border-radius: 12px; color: white; font-size: 1rem;">
+        </div>
+        
+        <div style="margin-bottom: 2rem;">
+          <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-weight: 500;">Account Name</label>
+          <input type="text" id="accountName" placeholder="Account holder name" style="width: 100%; padding: 0.75rem; background: var(--dark-3); border: 1px solid var(--dark-3); border-radius: 12px; color: white; font-size: 1rem;">
+        </div>
+        
+        <button onclick="processWithdrawal()" style="width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white; border: none; border-radius: 12px; cursor: pointer; font-size: 1.1rem; font-weight: 600; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);">
+          <i class="fas fa-credit-card"></i> Withdraw Funds
+        </button>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  modal.id = 'withdrawalModal';
+  
+  // Update balance display
+  api.getBalance().then(response => {
+    const totalBalance = response.balances.task + response.balances.dailyBonus + response.balances.referral;
+    document.getElementById('modalBalance').textContent = `$${totalBalance.toFixed(3)}`;
+    document.getElementById('modalBalanceNaira').textContent = `₦${(totalBalance * 1500).toLocaleString()}`;
+  });
+  
+  // Add conversion listener
+  document.getElementById('withdrawAmount').addEventListener('input', function() {
+    const amount = parseFloat(this.value) || 0;
+    document.getElementById('nairaConv').textContent = `≈ ₦${(amount * 1500).toLocaleString()}`;
+  });
+  
+  // Focus on amount input
+  setTimeout(() => {
+    document.getElementById('withdrawAmount').focus();
+  }, 100);
+}
+
+function closeWithdrawalModal() {
+  const modal = document.getElementById('withdrawalModal');
+  if (modal) document.body.removeChild(modal);
+}
+
+function processWithdrawal() {
+  const amount = parseFloat(document.getElementById('withdrawAmount').value);
+  const bankCode = document.getElementById('bankSelect').value;
+  const accountNumber = document.getElementById('accountNum').value;
+  const accountName = document.getElementById('accountName').value;
+  
+  if (!amount || amount < 0.010) {
+    showMessage('Minimum withdrawal is $0.010', 'error');
+    return;
+  }
+  
+  if (!bankCode || !accountNumber || !accountName) {
+    showMessage('Please fill all fields', 'error');
+    return;
+  }
+  
+  // Process via Paystack
+  const nairaAmount = Math.floor(amount * 1500 * 100); // Convert to kobo
+  
+  const handler = PaystackPop.setup({
+    key: 'pk_live_4aedf4cf8bb7ecca64d4075cbef01cf8a1079908',
+    email: currentUser.email,
+    amount: nairaAmount,
+    currency: 'NGN',
+    ref: 'WTH_' + Date.now(),
+    callback: function(response) {
+      // Deduct from balance
+      api.getBalance().then(balanceResponse => {
+        const balances = balanceResponse.balances;
+        const totalBalance = balances.task + balances.dailyBonus + balances.referral;
+        const ratio = amount / totalBalance;
+        
+        balances.task -= balances.task * ratio;
+        balances.dailyBonus -= balances.dailyBonus * ratio;
+        balances.referral -= balances.referral * ratio;
+        
+        localStorage.setItem('earnly_balance', JSON.stringify(balances));
+        
+        closeWithdrawalModal();
+        showMessage('Withdrawal successful! Funds sent to your account.', 'success');
+        
+        // Update dashboard balance
+        const newTotal = balances.task + balances.dailyBonus + balances.referral;
+        updateBalances(balances);
+      });
+    },
+    onClose: function() {
+      showMessage('Withdrawal cancelled', 'error');
+    }
+  });
+  
+  handler.openIframe();
+}
+
+function loadStats() {
+  // Load user stats from localStorage or API
+  const stats = JSON.parse(localStorage.getItem('earnly_user_stats') || '{}');
+  document.getElementById('dailyTasks').textContent = stats.dailyTasks || 0;
+  document.getElementById('streak').textContent = stats.streak || 0;
+  document.getElementById('referrals').textContent = stats.referrals || 0;
+}
+
+async function loadTopEarners() {
+  try {
+    const response = await api.getTopEarners();
+    displayTopEarners(response.topEarners);
+  } catch (error) {
+    // Generate mock data for demo
+    const mockEarners = [
+      { rank: 1, username: 'CryptoKing', totalEarnings: 245.67 },
+      { rank: 2, username: 'TaskMaster', totalEarnings: 198.43 },
+      { rank: 3, username: 'EarnPro', totalEarnings: 176.89 },
+      { rank: 4, username: 'MoneyMaker', totalEarnings: 154.32 },
+      { rank: 5, username: 'GoldRush', totalEarnings: 142.78 },
+      { rank: 6, username: 'CashFlow', totalEarnings: 128.95 },
+      { rank: 7, username: 'ProfitSeeker', totalEarnings: 115.67 },
+      { rank: 8, username: 'WealthBuilder', totalEarnings: 103.45 },
+      { rank: 9, username: 'EarningExpert', totalEarnings: 98.76 },
+      { rank: 10, username: 'RewardHunter', totalEarnings: 87.23 }
+    ];
+    displayTopEarners(mockEarners);
+  }
+}
+
+function displayTopEarners(earners) {
+  const grid = document.getElementById('topEarnersGrid');
+  
+  if (!earners || earners.length === 0) {
+    grid.innerHTML = '<div class="empty-state"><i class="fas fa-trophy"></i><p>No earners yet</p></div>';
+    return;
+  }
+  
+  grid.innerHTML = earners.map(earner => `
+    <div class="earner-card">
+      <div class="earner-rank">#${earner.rank}</div>
+      <div class="earner-name">${earner.username}</div>
+      <div class="earner-amount">$${earner.totalEarnings.toFixed(2)}</div>
+    </div>
+  `).join('');
+}
+
+function showMessage(text, type = 'error') {
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px 24px;
+    border-radius: 12px;
+    color: white;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease;
+    background: ${type === 'success' ? 'var(--secondary)' : 'var(--danger)'};
+  `;
+  
+  notification.innerHTML = `
+    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+    <span>${text}</span>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    document.body.removeChild(notification);
+  }, 3000);
+}
+
+// Update clock every second
+setInterval(updateClock, 1000);
+
+
+
+// Handle Enter key in admin passkey input
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && document.getElementById('adminModal').style.display === 'block') {
+    verifyAdminAccess();
+  }
+});
+
+// Check daily bonus status on load
+function checkDailyBonusStatus() {
+  const lastClaim = localStorage.getItem('earnly_last_daily_claim');
+  const today = new Date().toDateString();
+  
+  if (lastClaim === today) {
+    const dailyBonusBtn = document.querySelector('.action-btn[onclick="claimDailyBonus()"]');
+    if (dailyBonusBtn) {
+      dailyBonusBtn.style.opacity = '0.5';
+      dailyBonusBtn.style.pointerEvents = 'none';
+      dailyBonusBtn.innerHTML = '<div class="action-icon"><i class="fas fa-check"></i></div><h3>Claimed Today</h3><p>Come back tomorrow</p>';
+    }
+  }
+}
+
+// Initialize dashboard
+document.addEventListener('DOMContentLoaded', function() {
+  initDashboard();
+  checkDailyBonusStatus();
+  
+  // Load Paystack
+  const script = document.createElement('script');
+  script.src = 'https://js.paystack.co/v1/inline.js';
+  document.head.appendChild(script);
+});
+</script>
+</body>
+</html>

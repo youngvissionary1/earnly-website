@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ey-TV Admin Panel</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Arial, sans-serif; background: #111; color: white; padding: 20px; }
+.container { max-width: 800px; margin: 0 auto; }
+.card { background: #222; padding: 20px; border-radius: 10px; margin: 20px 0; }
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 5px; }
+.form-control { width: 100%; padding: 10px; background: #333; border: 1px solid #555; border-radius: 5px; color: white; }
+.btn { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+.btn:hover { background: #0056b3; }
+.btn-danger { background: #dc3545; }
+.btn-success { background: #28a745; }
+.video-item { background: #333; padding: 15px; margin: 10px 0; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; }
+.video-info h4 { margin-bottom: 5px; }
+.video-info p { color: #ccc; font-size: 14px; }
+.video-controls { display: flex; gap: 5px; }
+</style>
+</head>
+<body>
+
+<!-- Login Form -->
+<div id="loginForm" class="container">
+  <div class="card">
+    <h2>🔐 Ey-TV Admin Access</h2>
+    <div class="form-group">
+      <label>Admin Passkey:</label>
+      <input type="password" id="adminPass" placeholder="Enter admin passkey" class="form-control">
+    </div>
+    <button onclick="adminLogin()" class="btn">Access Admin Panel</button>
+  </div>
+</div>
+
+<!-- Admin Panel -->
+<div id="adminPanel" style="display:none;" class="container">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+    <h1>📺 Ey-TV Admin Panel</h1>
+    <button onclick="logout()" class="btn btn-danger">Logout</button>
+  </div>
+  
+  <!-- Channel Management -->
+  <div class="card">
+    <h3>📋 Channel Management</h3>
+    <div class="form-group">
+      <label>Select Channel:</label>
+      <select id="channelSelect" onchange="loadChannelVideos()" class="form-control">
+        <option value="movies">🎬 Movies</option>
+        <option value="action">🔥 Action Movies</option>
+        <option value="music">🎵 Music</option>
+        <option value="shows">📺 Shows</option>
+        <option value="comedy">😂 Comedy</option>
+      </select>
+    </div>
+    
+    <div id="videoList">
+      <div style="text-align:center;padding:2rem;color:#ccc;">Select a channel to manage videos</div>
+    </div>
+  </div>
+  
+  <!-- Add Video -->
+  <div class="card">
+    <h3>➕ Add New Video</h3>
+    <div class="form-group">
+      <label>Video Title:</label>
+      <input type="text" id="videoTitle" placeholder="Enter video title" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>Google Drive Link:</label>
+      <input type="url" id="driveLink" placeholder="https://drive.google.com/file/d/..." class="form-control">
+    </div>
+    <div class="form-group">
+      <label>Description (Optional):</label>
+      <textarea id="videoDesc" placeholder="Video description" class="form-control" rows="3"></textarea>
+    </div>
+    <button onclick="addVideo()" class="btn">Add to Channel</button>
+  </div>
+</div>
+
+<script>
+const ADMIN_PASSKEY = 'eytv2024admin';
+let currentChannel = 'movies';
+let channelData = JSON.parse(localStorage.getItem('eytv_channels') || '{}');
+
+// Initialize default channels
+if (Object.keys(channelData).length === 0) {
+  channelData = {
+    movies: [],
+    action: [],
+    music: [],
+    shows: [],
+    comedy: []
+  };
+  localStorage.setItem('eytv_channels', JSON.stringify(channelData));
+}
+
+function adminLogin() {
+  const passkey = document.getElementById('adminPass').value;
+  if (passkey === ADMIN_PASSKEY) {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    loadChannelVideos();
+  } else {
+    alert('Invalid passkey!');
+  }
+}
+
+function logout() {
+  document.getElementById('loginForm').style.display = 'block';
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('adminPass').value = '';
+}
+
+function loadChannelVideos() {
+  currentChannel = document.getElementById('channelSelect').value;
+  const videos = channelData[currentChannel] || [];
+  const videoList = document.getElementById('videoList');
+  
+  if (videos.length === 0) {
+    videoList.innerHTML = '<div style="text-align:center;padding:2rem;color:#ccc;">No videos in this channel</div>';
+    return;
+  }
+  
+  videoList.innerHTML = videos.map((video, index) => `
+    <div class="video-item">
+      <div class="video-info">
+        <h4>${video.title}</h4>
+        <p>${video.description || 'No description'}</p>
+        <p>Added: ${new Date(video.addedAt).toLocaleDateString()}</p>
+      </div>
+      <div class="video-controls">
+        <button onclick="moveVideo(${index}, 'up')" class="btn btn-success">↑</button>
+        <button onclick="moveVideo(${index}, 'down')" class="btn btn-success">↓</button>
+        <button onclick="removeVideo(${index})" class="btn btn-danger">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addVideo() {
+  const title = document.getElementById('videoTitle').value.trim();
+  const driveLink = document.getElementById('driveLink').value.trim();
+  const description = document.getElementById('videoDesc').value.trim();
+  
+  if (!title || !driveLink) {
+    alert('Please enter title and Google Drive link');
+    return;
+  }
+  
+  const fileId = extractFileId(driveLink);
+  if (!fileId) {
+    alert('Invalid Google Drive link format');
+    return;
+  }
+  
+  const video = {
+    id: Date.now().toString(),
+    title: title,
+    description: description,
+    driveLink: driveLink,
+    streamUrl: `https://drive.google.com/uc?export=download&id=${fileId}`,
+    addedAt: new Date().toISOString()
+  };
+  
+  channelData[currentChannel].push(video);
+  localStorage.setItem('eytv_channels', JSON.stringify(channelData));
+  
+  document.getElementById('videoTitle').value = '';
+  document.getElementById('driveLink').value = '';
+  document.getElementById('videoDesc').value = '';
+  
+  loadChannelVideos();
+  alert('Video added successfully!');
+}
+
+function removeVideo(index) {
+  if (confirm('Remove this video?')) {
+    channelData[currentChannel].splice(index, 1);
+    localStorage.setItem('eytv_channels', JSON.stringify(channelData));
+    loadChannelVideos();
+  }
+}
+
+function moveVideo(index, direction) {
+  const videos = channelData[currentChannel];
+  if (direction === 'up' && index > 0) {
+    [videos[index], videos[index - 1]] = [videos[index - 1], videos[index]];
+  } else if (direction === 'down' && index < videos.length - 1) {
+    [videos[index], videos[index + 1]] = [videos[index + 1], videos[index]];
+  }
+  localStorage.setItem('eytv_channels', JSON.stringify(channelData));
+  loadChannelVideos();
+}
+
+function extractFileId(driveUrl) {
+  const match = driveUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
+  return match ? match[1] : null;
+}
+
+// Better Google Drive URL conversion
+function convertDriveUrl(driveUrl) {
+  const fileId = extractFileId(driveUrl);
+  if (fileId) {
+    return `https://drive.google.com/file/d/${fileId}/preview`;
+  }
+  return driveUrl;
+}
+</script>
+
+</body>
+</html>
