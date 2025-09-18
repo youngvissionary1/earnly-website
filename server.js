@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
 const fetch = require('node-fetch');
-const PaystackService = require('./payment/paystack.js
+const PaystackService = require('./payment/paystack.js')
   
 
 const app = express();
